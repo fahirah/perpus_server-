@@ -82,5 +82,19 @@ class MainModel extends ModelBase {
 		return FALSE;
 	}
 	}	
+	
+	public function view_prodi() {
+		$r=array();
+		$hasil=$this->db->query("SELECT * FROM tbl_prodi");
+		for($i=0; $i<count($hasil);$i++){
+			$d=$hasil[$i];
+			
+			$r[]=array(
+				'kode'=>$d->kode_prodi,
+				'nama'=>$d->nama_prodi,
+			);
+		}
+		return $r;
+	}
 }
 
