@@ -23,32 +23,35 @@ class AnggotaModel extends ModelBase {
 		//$p=array();
 		
 		$hasil=$this->db->query("SELECT * FROM tbl_anggota where nama_anggota like '%{$kata}%' limit $start,$tdph");
-		for($i=0; $i<count($hasil);$i++){
-			$d=$hasil[$i];
-			$kd=$d->kode_prodi;
-			$ambilkd=$this->db->query("SELECT * from tbl_prodi where kode_prodi='".$kd."'", TRUE);
-			$prodi = $ambilkd->nama_prodi;
-			 
-			$r[]=array(
-				'id'=>$d->id_anggota,
-				'nama'=>$d->nama_anggota,
-				'identitas'=>$d->no_identitas,
-				'alamat'=>$d->alamat_anggota,
-				'telp'=>$d->telp_anggota,
-				'jk'=> ($d->jeniskelamin_anggota == 'P' ? 'Perempuan' : 'Laki-laki'),
-				'gender' => $d->jeniskelamin_anggota,
-				'level'=>($d->status_anggota == 'm' ? 'Mahasiswa' : 'Dosen'),
-				'status'=> $d->status_anggota,
-				'prodi'=>$kd,
-				'kd'=>$prodi
+		if(count($hasil)<=0)  return FALSE;
+		else{
+			for($i=0; $i<count($hasil);$i++){
+				$d=$hasil[$i];
+				$kd=$d->kode_prodi;
+				$ambilkd=$this->db->query("SELECT * from tbl_prodi where kode_prodi='".$kd."'", TRUE);
+				$prodi = $ambilkd->nama_prodi;
+				 
+				$r[]=array(
+					'id'=>$d->id_anggota,
+					'nama'=>$d->nama_anggota,
+					'identitas'=>$d->no_identitas,
+					'alamat'=>$d->alamat_anggota,
+					'telp'=>$d->telp_anggota,
+					'jk'=> ($d->jeniskelamin_anggota == 'P' ? 'Perempuan' : 'Laki-laki'),
+					'gender' => $d->jeniskelamin_anggota,
+					'level'=>($d->status_anggota == 'm' ? 'Mahasiswa' : 'Dosen'),
+					'status'=> $d->status_anggota,
+					'prodi'=>$kd,
+					'kd'=>$prodi
+				);
+				//nama:'',identitas:'',alamat:'', telp:'', gender:'L', status:'m', prodi:''
+			}
+			
+			return array(
+				'data' => $r,
+				'numpage' => $numpage
 			);
-			//nama:'',identitas:'',alamat:'', telp:'', gender:'L', status:'m', prodi:''
 		}
-		
-		return array(
-			'data' => $r,
-			'numpage' => $numpage
-		);
 	}	
 	
 	public function tambah_anggota(){
