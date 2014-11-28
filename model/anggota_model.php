@@ -10,18 +10,19 @@ class AnggotaModel extends ModelBase {
 	}
 	
 	public function view_anggota() {
-		extract($this->prepare_get(array('cpage')));
+		extract($this->prepare_get(array('cpage','kata')));
+		$kata=$this->db->escape_str($kata);
 		$cpage = floatval($cpage);
 		//total halaman
 		$tdph=20;
-		$totalhalaman=$this->db->query("select count(id_anggota) as hasil from tbl_anggota",true);
+		$totalhalaman=$this->db->query("select count(id_anggota) as hasil from tbl_anggota where nama_anggota like '%{$kata}%' ",true);
 		$numpage=ceil($totalhalaman->hasil/$tdph);
 		$start=$cpage*$tdph;
 		
 		$r=array();
 		//$p=array();
 		
-		$hasil=$this->db->query("SELECT * FROM tbl_anggota limit $start,$tdph");
+		$hasil=$this->db->query("SELECT * FROM tbl_anggota where nama_anggota like '%{$kata}%' limit $start,$tdph");
 		for($i=0; $i<count($hasil);$i++){
 			$d=$hasil[$i];
 			$kd=$d->kode_prodi;

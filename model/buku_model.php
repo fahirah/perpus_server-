@@ -10,8 +10,18 @@ class BukuModel extends ModelBase {
 	}
 	
 	public function view_buku() {
+		extract($this->prepare_get(array('cpagebk','kata','jenis')));
+		$kata=$this->db->escape_str($kata);
+		$cpagebk = floatval($cpagebk);
+		//total halaman
+		$tdph=20;
+		
+		$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where judul_buku like '%{$kata}%'",true);
+	
+		$numpagebk=ceil($totalhalaman->hasil/$tdph);
+		$start=$cpagebk*$tdph;
 		$r=array();
-		$hasil=$this->db->query("SELECT * FROM tbl_buku");
+		$hasil=$this->db->query("SELECT * FROM tbl_buku where judul_buku like '%{$kata}%' limit $start,$tdph");
 		for($i=0; $i<count($hasil);$i++){
 			$d=$hasil[$i];
 			
@@ -28,7 +38,10 @@ class BukuModel extends ModelBase {
 				'tahun'=>$d->tahun_terbit_buku
 			);
 		}
-		return $r;
+		return array(
+		'data' => $r,
+		'numpagebk' => $numpagebk
+		);
 	}	
 	
 	public function tambah_buku(){
@@ -46,10 +59,13 @@ class BukuModel extends ModelBase {
 		} else {
 			// edit
 			$edit=$this->db->query("update tbl_buku set kode_buku='$kode', judul_buku='$judul', pengarang_buku='$pengarang',stok_buku='$stok', macam_buku='$macam', bahasa_buku='$bahasa', no_penempatan='$penempatan', penerbit_buku='$penerbit', tahun_terbit_buku='$tahun' where id_buku='$id'");
-			echo $this->db->get_error();
-			return;
 		}
 		return $this->view_buku();
+	}
+	
+	public function delete_buku($id){
+		$id = floatval($id);
+		$this->db->query("delete from tbl_buku where id_buku='$id'");
 	}
 
 }

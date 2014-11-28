@@ -129,3 +129,17 @@ $app->post('/admin/buku', function() use ($app,$ctr) {
 	$r=$ctr->BukuModel->tambah_buku();
 	json_output($app, $r);
 });
+
+// ----------------------------------------------------------------
+/**
+ * Method: DELETE
+ * Verb: buku
+ */
+$app->options('/admin/buku/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->delete('/admin/buku/:id', function($id) use ($app,$ctr) {
+	$ctr->load('model','buku');
+	$r=$ctr->BukuModel->delete_buku($id);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
