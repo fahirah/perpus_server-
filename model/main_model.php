@@ -12,23 +12,57 @@ class MainModel extends ModelBase {
 	}
 	
 	public function view_buku() {
+		extract($this->prepare_get(array('cpagebk','kata','jenis')));
+		$kata=$this->db->escape_str($kata);
+		$jenis=$this->db->escape_str($jenis);
+		$cpagebk = floatval($cpagebk);
+		//total halaman
+		$tdph=20;
+	
+		if(empty($jenis)){
+			$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where judul_buku like '%{$kata}%' or pengarang_buku like '%{$kata}%'",true);
+		}else if($jenis=="judul"){
+			$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where judul_buku like '%{$kata}%'",true);
+		}else if($jenis=="pengarang"){
+			$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where pengarang_buku like '%{$kata}%'",true);
+		}else if($jenis=="penerbit"){
+			$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where penerbit_buku like '%{$kata}%'",true);
+		}
+		
+		$numpagebk=ceil($totalhalaman->hasil/$tdph);
+		$start=$cpagebk*$tdph;
 		$r=array();
-		$hasil=$this->db->query("SELECT * FROM tbl_buku");
-		for($i=0; $i<count($hasil);$i++){
-			$d=$hasil[$i];
-			
-			$r[]=array(
-				'kode'=>$d->kode_buku,
-				'judul'=>$d->judul_buku,
-				'pengarang'=>$d->pengarang_buku,
-				'stok'=>$d->stok_buku,
-				'macam'=>$d->macam_buku,
-				'bahasa'=>$d->bahasa_buku,
-				'penerbit'=>$d->penerbit_buku,
-				'tahun'=>$d->tahun_terbit_buku
+		if(empty($jenis)){
+			$hasil=$this->db->query("SELECT * FROM tbl_buku where judul_buku like '%{$kata}%' or pengarang_buku like '%{$kata}%' limit $start,$tdph");
+		}else if($jenis=="judul"){
+			$hasil=$this->db->query("SELECT * FROM tbl_buku where judul_buku like '%{$kata}%' limit $start,$tdph");
+		}else if($jenis=="pengarang"){
+			$hasil=$this->db->query("SELECT * FROM tbl_buku where pengarang_buku like '%{$kata}%' limit $start,$tdph");
+		}else if($jenis=="penerbit"){
+			$hasil=$this->db->query("SELECT * FROM tbl_buku where penerbit_buku like '%{$kata}%' limit $start,$tdph");
+		}
+		
+		if(count($hasil)<=0)  return FALSE;
+		else{
+			for($i=0; $i<count($hasil);$i++){
+				$d=$hasil[$i];
+				
+				$r[]=array(
+					'kode'=>$d->kode_buku,
+					'judul'=>$d->judul_buku,
+					'pengarang'=>$d->pengarang_buku,
+					'stok'=>$d->stok_buku,
+					'macam'=>$d->macam_buku,
+					'bahasa'=>$d->bahasa_buku,
+					'penerbit'=>$d->penerbit_buku,
+					'tahun'=>$d->tahun_terbit_buku
+				);
+			}
+			return array(
+				'data' => $r,
+				'numpagebk' => $numpagebk
 			);
 		}
-		return $r;
 	}
 	
 	public function view_file() {

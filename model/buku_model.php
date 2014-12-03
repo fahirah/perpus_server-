@@ -18,7 +18,7 @@ class BukuModel extends ModelBase {
 		$tdph=20;
 	
 		if(empty($jenis)){
-			$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where judul_buku like '%{$kata}%' or pengarang_buku like '%{$kata}%'",true);
+			$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where judul_buku like '%{$kata}%' or pengarang_buku like '%{$kata}%' or penerbit_buku like '%{kata}%' ",true);
 		}else if($jenis=="judul"){
 			$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where judul_buku like '%{$kata}%'",true);
 		}else if($jenis=="pengarang"){
