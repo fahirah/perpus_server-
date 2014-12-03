@@ -51,7 +51,7 @@ class MainModel extends ModelBase {
 					'kode'=>$d->kode_buku,
 					'judul'=>$d->judul_buku,
 					'pengarang'=>$d->pengarang_buku,
-					'stok'=>$d->stok_buku,
+					'stok'=>$d->sisa_stok_buku,
 					'macam'=>$d->macam_buku,
 					'bahasa'=>$d->bahasa_buku,
 					'penerbit'=>$d->penerbit_buku,
@@ -66,24 +66,58 @@ class MainModel extends ModelBase {
 	}
 	
 	public function view_file() {
+		extract($this->prepare_get(array('cpagefl','kata','jenis')));
+		$kata=$this->db->escape_str($kata);
+		$jenis=$this->db->escape_str($jenis);
+		$cpagefl = floatval($cpagefl);
+		//total halaman
+		$tdph=20;
+		
+		if(empty($jenis)){
+			$totalhalaman=$this->db->query("select count(kode_file) as hasil from tbl_file where judul_file like '%{$kata}%' or pengarang_file like '%{$kata}%' or penerbit_file like '%{kata}%' ",true);
+		}else if($jenis=="judul"){
+			$totalhalaman=$this->db->query("select count(kode_file) as hasil from tbl_file where judul_file like '%{$kata}%'",true);
+		}else if($jenis=="pengarang"){
+			$totalhalaman=$this->db->query("select count(kode_file) as hasil from tbl_file where pengarang_file like '%{$kata}%'",true);
+		}else if($jenis=="penerbit"){
+			$totalhalaman=$this->db->query("select count(kode_file) as hasil from tbl_file where penerbit_file like '%{$kata}%'",true);
+		}
+		
+		$numpagefl=ceil($totalhalaman->hasil/$tdph);
+		$start=$cpagefl*$tdph;
 		$r=array();
-		$hasil=$this->db->query("SELECT * FROM tbl_file");
-		for($i=0; $i<count($hasil);$i++){
-			$d=$hasil[$i];
+		if(empty($jenis)){
+			$hasil=$this->db->query("SELECT * FROM tbl_file where judul_file like '%{$kata}%' or pengarang_file like '%{$kata}%' or penerbit_file like '%{$kata}%' limit $start,$tdph");
+		}else if($jenis=="judul"){
+			$hasil=$this->db->query("SELECT * FROM tbl_file where judul_file like '%{$kata}%' limit $start,$tdph");
+		}else if($jenis=="pengarang"){
+			$hasil=$this->db->query("SELECT * FROM tbl_file where pengarang_file like '%{$kata}%' limit $start,$tdph");
+		}else if($jenis=="penerbit"){
+			$hasil=$this->db->query("SELECT * FROM tbl_file where penerbit_file like '%{$kata}%' limit $start,$tdph");
+		}
+		
+		if(count($hasil)<=0) return FALSE;
+		else{		
+			for($i=0; $i<count($hasil);$i++){
+				$d=$hasil[$i];
 			
-			$r[]=array(
-				'kode'=>$d->kode_file,
-				'judul'=>$d->judul_file,
-				'pengarang'=>$d->pengarang_file,
-				'macam'=>$d->macam_file,
-				'bahasa'=>$d->bahasa_file,
-				'penerbit'=>$d->penerbit_file,
-				'tahun'=>$d->tahun_terbit_file,
-				'tgl'=>$d->tgl_upload,
-				'ringkasan'=>$d->ringkasan
+				$r[]=array(
+					'kode'=>$d->kode_file,
+					'judul'=>$d->judul_file,
+					'pengarang'=>$d->pengarang_file,
+					'macam'=>$d->macam_file,
+					'bahasa'=>$d->bahasa_file,
+					'penerbit'=>$d->penerbit_file,
+					'tahun'=>$d->tahun_terbit_file,
+					'tgl'=>$d->tgl_upload,
+					'ringkasan'=>$d->ringkasan
+				);
+			}
+			return array(
+				'data' => $r,
+				'numpagefl' => $numpagefl
 			);
 		}
-		return $r;
 	}
 	
 	public function login() {

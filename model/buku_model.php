@@ -51,6 +51,7 @@ class BukuModel extends ModelBase {
 					'judul'=>$d->judul_buku,
 					'pengarang'=>$d->pengarang_buku,
 					'stok'=>$d->stok_buku,
+					'sisa'=>$d->sisa_stok_buku,
 					'macam'=>$d->macam_buku,
 					'bahasa'=>$d->bahasa_buku,
 					'penempatan'=>$d->no_penempatan,

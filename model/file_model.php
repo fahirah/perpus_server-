@@ -40,7 +40,8 @@ class FileModel extends ModelBase {
 			$hasil=$this->db->query("SELECT * FROM tbl_file where penerbit_file like '%{$kata}%' limit $start,$tdph");
 		}
 		
-		if(count($hasil)<=0) return array();
+		if(count($hasil)<=0) return FALSE;
+		//return array();
 		else{		
 			for($i=0; $i<count($hasil);$i++){
 				$d=$hasil[$i];
@@ -54,7 +55,8 @@ class FileModel extends ModelBase {
 					'bahasa'=>$d->bahasa_file,
 					'penerbit'=>$d->penerbit_file,
 					'tahun'=>$d->tahun_terbit_file,
-					'ringkasan'=>$d->ringkasan
+					'ringkasan'=>$d->ringkasan,
+					'tgl'=>date('d-m-Y', strtotime($d->tgl_upload))
 				);
 			}
 			return array(
@@ -86,7 +88,7 @@ class FileModel extends ModelBase {
 	
 		if (empty($id)) {
 			//insert
-			$ins=$this->db->query("INSERT INTO tbl_file VALUES(0,'$filepath','$judul','$pengarang','$macam','$bahasa','$penerbit','$tahun', '$ringkasan', NOW(), '$scope.user')");
+			$ins=$this->db->query("INSERT INTO tbl_file VALUES(0,'$filepath','$judul','$pengarang','$macam','$bahasa','$penerbit','$tahun', '$ringkasan', NOW(), '1')");
 		} else {
 			// edit
 			$ambil=$this->db->query("select nama_file from tbl_file where kode_file='$id'",true);
@@ -104,10 +106,8 @@ class FileModel extends ModelBase {
 	
 	public function delete_file($id){
 		$id = floatval($id);
-		$ambil=$this->db->query("select nama_file from tbl_file where kode_file='$id'");
-		
-		//$berkas=$ambil->nama_file;
-		//unlink($berkas);
-		//$this->db->query("delete from tbl_file where kode_file='$id'");
+		$ambil=$this->db->query("select nama_file from tbl_file where kode_file='$id'",true);
+		@unlink($ambil->nama_file);
+		$this->db->query("delete from tbl_file where kode_file='$id'");
 	}
 }
