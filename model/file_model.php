@@ -67,7 +67,7 @@ class FileModel extends ModelBase {
 	}
 	
 	public function tambah_file($iofiles){
-		extract($this->prepare_post(array('id', 'judul', 'pengarang', 'macam', 'bahasa', 'penerbit', 'tahun', 'ringkasan')));
+		extract($this->prepare_post(array('id', 'judul', 'pengarang', 'macam', 'bahasa', 'penerbit', 'tahun', 'ringkasan','status', 'id_user')));
 		$judul=$this->db->escape_str($judul);
 		$pengarang=$this->db->escape_str($pengarang);
 		$macam=$this->db->escape_str($macam);
@@ -85,10 +85,20 @@ class FileModel extends ModelBase {
 		
 		$filename = $iofiles->upload_get_param('file_name');
 		$filepath = 'berkas/'.$filename;
-	
+		
+		if ($status == 2){
+			// berarti petugas
+			$petugas=$id_user;
+			$dosen=0;
+		} else{
+			// berarti dosen
+			$dosen=$id_user;
+			$petugas=0;
+		}
+		
 		if (empty($id)) {
 			//insert
-			$ins=$this->db->query("INSERT INTO tbl_file VALUES(0,'$filepath','$judul','$pengarang','$macam','$bahasa','$penerbit','$tahun', '$ringkasan', NOW(), '1')");
+			$ins=$this->db->query("INSERT INTO tbl_file VALUES(0,'$filepath','$judul','$pengarang','$macam','$bahasa','$penerbit','$tahun', '$ringkasan', NOW(), '$petugas','$dosen')");
 		} else {
 			// edit
 			$ambil=$this->db->query("select nama_file from tbl_file where kode_file='$id'",true);

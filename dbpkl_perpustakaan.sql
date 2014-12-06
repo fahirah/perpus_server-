@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Waktu pembuatan: 03. Desember 2014 jam 15:43
+-- Waktu pembuatan: 06. Desember 2014 jam 00:02
 -- Versi Server: 5.5.16
 -- Versi PHP: 5.3.8
 
@@ -57,8 +57,8 @@ CREATE TABLE IF NOT EXISTS `tbl_anggota` (
 
 INSERT INTO `tbl_anggota` (`id_anggota`, `nama_anggota`, `no_identitas`, `alamat_anggota`, `telp_anggota`, `jeniskelamin_anggota`, `status_anggota`, `kode_prodi`, `password_anggota`) VALUES
 (2, 'iraa', '1155201855', 'bluto', '00000', 'P', 'm', 1, '1155201855'),
-(3, 'nazir', '0909090', 'dirgahayu', '0000', 'L', 'd', 1, '0909090'),
-(4, 'upin', '11552', 'bluto', '0000', 'L', 'm', 2, '11552'),
+(3, 'nazir', '01', 'dirgahayu', '0000', 'L', 'd', 1, '01'),
+(4, 'upin', '02', 'bluto', '0000', 'L', 'm', 2, '02'),
 (6, 'arifin', '0909090', 'pmksn', '00000', 'P', 'm', 1, '0909090'),
 (8, 'aliansyah', '1055201880', 'pamekasan', '081923222', 'L', 'm', 1, '1055201880'),
 (9, 'hasbi', '201355201090', 'bugih', '08193245', 'L', 'm', 2, '201355201090');
@@ -93,10 +93,10 @@ INSERT INTO `tbl_buku` (`id_buku`, `kode_buku`, `judul_buku`, `pengarang_buku`, 
 (2, 'B002', 'ketika cinta bertasbih', 'ipin', 10, 1, 'U', 'Indonesia', 'no 2', 'Yudistira', 2011),
 (3, 'B003', 'php', 'andi', 10, 5, 'R', 'Indonesia', 'no 3', 'andi', 2010),
 (4, 'B004', 'mysql dan php', 'upin', 5, 2, 'R', 'Inggris', 'no 4', 'andi', 2013),
-(6, 'B005', 'teknologi informasi', 'internet saja', 2, 0, 'U', 'Indonesia', 'no 5', 'andi', 2010),
+(6, 'B005', 'teknologi informasi', 'internet saja', 2, 2, 'U', 'Indonesia', 'no 5', 'andi', 2010),
 (7, 'B006', 'pemrograman visual', 'fahirah', 12, 10, 'R', 'Indonesia', 'no 6', 'yudistira', 2014),
 (8, 'B007', 'cinta suci zahrana', 'afika', 5, 0, 'U', 'Indonesia', 'no 7', 'sinar dunia', 2010),
-(9, 'B008', 'Netbeans', 'Nazir Arifin', 3, 0, 'U', 'Indonesia', 'no 8', 'airlangga', 2010),
+(9, 'B008', 'Netbeans', 'Nazir Arifin', 3, 1, 'U', 'Indonesia', 'no 8', 'airlangga', 2010),
 (10, 'B009', 'tom n jerry', 'nazir', 2, 0, 'U', 'Indonesia', 'no 9', 'andi', 2010),
 (11, 'B010', 'html dasar', 'iraa', 9, 0, 'U', 'Indonesia', 'iiiiiiii', 'andi', 2010),
 (13, 'B012', 'css 3', 'ipin', 10, 0, 'U', '', '9ooooo', 'aaa', 0000);
@@ -109,21 +109,27 @@ INSERT INTO `tbl_buku` (`id_buku`, `kode_buku`, `judul_buku`, `pengarang_buku`, 
 
 CREATE TABLE IF NOT EXISTS `tbl_detail_peminjaman` (
   `id_detail_peminjaman` int(11) NOT NULL AUTO_INCREMENT,
-  `kode_peminjaman` char(5) DEFAULT NULL,
+  `kode_peminjaman` int(11) DEFAULT NULL,
   `id_buku` int(11) DEFAULT NULL,
   `tgl_pinjam` date DEFAULT NULL,
   `tgl_kembali` date DEFAULT NULL,
   `tgl_pengembalian` date DEFAULT NULL,
   `denda` int(11) DEFAULT NULL,
   PRIMARY KEY (`id_detail_peminjaman`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
 --
 -- Dumping data untuk tabel `tbl_detail_peminjaman`
 --
 
 INSERT INTO `tbl_detail_peminjaman` (`id_detail_peminjaman`, `kode_peminjaman`, `id_buku`, `tgl_pinjam`, `tgl_kembali`, `tgl_pengembalian`, `denda`) VALUES
-(1, '1', 1, '2014-12-01', '2014-12-08', NULL, NULL);
+(1, 1, 1, '2014-12-05', '2014-12-12', '0000-00-00', 0),
+(2, 1, 2, '2014-12-05', '2014-12-12', '0000-00-00', 0),
+(3, 1, 3, '2014-12-05', '2014-12-12', '0000-00-00', 0),
+(4, 2, 9, '2014-12-05', '2014-12-12', '0000-00-00', 0),
+(5, 2, 3, '2014-12-05', '2014-12-12', '0000-00-00', 0),
+(6, 3, 6, '2014-12-05', '2014-12-12', '0000-00-00', 0),
+(7, 4, 3, '2014-12-05', '2014-12-12', '0000-00-00', 0);
 
 -- --------------------------------------------------------
 
@@ -143,16 +149,19 @@ CREATE TABLE IF NOT EXISTS `tbl_file` (
   `ringkasan` text NOT NULL,
   `tgl_upload` date NOT NULL,
   `id_petugas` int(11) NOT NULL,
+  `id_anggota` int(11) NOT NULL,
   PRIMARY KEY (`kode_file`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 
 --
 -- Dumping data untuk tabel `tbl_file`
 --
 
-INSERT INTO `tbl_file` (`kode_file`, `nama_file`, `judul_file`, `pengarang_file`, `macam_file`, `bahasa_file`, `penerbit_file`, `tahun_terbit_file`, `ringkasan`, `tgl_upload`, `id_petugas`) VALUES
-(13, 'berkas/e9dd99093f80fbb0548dadb127b4ccf6.docx', 'php', 'upin', 'U', 'Indonesia', 'andi', 2010, 'abcdefghij', '2014-12-03', 1),
-(14, 'berkas/a22ecacc4708fb7f01e52346074bcc11.docx', 'abcd', 'andi', 'U', 'Indonesia', 'andi', 2010, 'aaaaaaaaaaaaa', '2014-12-03', 0);
+INSERT INTO `tbl_file` (`kode_file`, `nama_file`, `judul_file`, `pengarang_file`, `macam_file`, `bahasa_file`, `penerbit_file`, `tahun_terbit_file`, `ringkasan`, `tgl_upload`, `id_petugas`, `id_anggota`) VALUES
+(13, 'berkas/e9dd99093f80fbb0548dadb127b4ccf6.docx', 'php', 'upin', 'U', 'Indonesia', 'andi', 2010, 'abcdefghij', '2014-12-03', 1, 0),
+(17, 'berkas/383361c16d76ce742e8f8500e7d4f0a2.xlsx', 'model simulasi', 'erwin', 'R', 'Inggris', 'airlangga', 2011, 'model simulasi', '2014-12-03', 1, 0),
+(18, 'berkas/73895cb47897384f196067189839bcb4.xlsx', 'struktur data', 'iraa', 'U', 'Indonesia', 'andi', 2010, 'aaabbbbbccccddddeeee', '2014-12-04', 1, 0),
+(19, 'berkas/7e623fd09c724533b9e7b950944a5966.docx', 'coba', 'andi', 'U', 'Indonesia', 'andi', 2010, 'aaaaaaaa', '2014-12-04', 2, 0);
 
 -- --------------------------------------------------------
 
@@ -161,7 +170,7 @@ INSERT INTO `tbl_file` (`kode_file`, `nama_file`, `judul_file`, `pengarang_file`
 --
 
 CREATE TABLE IF NOT EXISTS `tbl_peminjaman_pengembalian` (
-  `kode_peminjaman` char(5) NOT NULL,
+  `kode_peminjaman` int(11) NOT NULL,
   `id_anggota` char(5) DEFAULT NULL,
   `id_petugas` int(11) DEFAULT NULL,
   `status_peminjaman` char(10) DEFAULT NULL,
@@ -173,7 +182,10 @@ CREATE TABLE IF NOT EXISTS `tbl_peminjaman_pengembalian` (
 --
 
 INSERT INTO `tbl_peminjaman_pengembalian` (`kode_peminjaman`, `id_anggota`, `id_petugas`, `status_peminjaman`) VALUES
-('1', '2', 1, 'pinjam');
+(1, '2', 1, 'pinjam'),
+(2, '3', 1, 'pinjam'),
+(3, '4', 1, 'pinjam'),
+(4, '3', 1, 'pinjam');
 
 -- --------------------------------------------------------
 

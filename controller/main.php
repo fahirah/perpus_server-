@@ -214,3 +214,30 @@ $app->get('/cekbuku/:kode', function($kode) use ($app,$ctr) {
 		return halt401($app);
 	json_output($app, $r);
 });
+
+// ----------------------------------------------------------------
+/**
+ * Method: POST
+ * Verb: peminjaman
+ */
+$app->post('/admin/peminjaman', function() use ($app,$ctr) {
+	$ctr->load('model','peminjaman');
+	$r=$ctr->PeminjamanModel->tambah_peminjaman();
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: detailpeminjaman
+ */
+$app->options('/detailpjm/:kode', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/detailpjm/:kode', function($kode) use ($app,$ctr) {
+	$ctr->load('model','peminjaman');
+	$ctr->load('helper', 'date');
+	$r=$ctr->PeminjamanModel->view_detilpjm($kode);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+

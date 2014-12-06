@@ -109,7 +109,7 @@ class MainModel extends ModelBase {
 					'bahasa'=>$d->bahasa_file,
 					'penerbit'=>$d->penerbit_file,
 					'tahun'=>$d->tahun_terbit_file,
-					'tgl'=>$d->tgl_upload,
+					'tgl'=>date('d-m-Y', strtotime($d->tgl_upload)),
 					'ringkasan'=>$d->ringkasan
 				);
 			}
@@ -143,7 +143,8 @@ class MainModel extends ModelBase {
 		else return array(
 			'token'=> crypt($username, $password),
 			'id'=>$id,
-			'status'=>1
+			'status'=>1,
+			'level'=>$hasil->status_anggota
 		);
 	}
 	else{
