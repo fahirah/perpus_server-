@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Waktu pembuatan: 06. Desember 2014 jam 00:02
+-- Waktu pembuatan: 06. Desember 2014 jam 17:18
 -- Versi Server: 5.5.16
 -- Versi PHP: 5.3.8
 
@@ -89,9 +89,9 @@ CREATE TABLE IF NOT EXISTS `tbl_buku` (
 --
 
 INSERT INTO `tbl_buku` (`id_buku`, `kode_buku`, `judul_buku`, `pengarang_buku`, `stok_buku`, `sisa_stok_buku`, `macam_buku`, `bahasa_buku`, `no_penempatan`, `penerbit_buku`, `tahun_terbit_buku`) VALUES
-(1, 'B001', 'ayat-ayat cinta', 'fahirah', 10, 8, 'U', 'Indonesia', 'no 1', 'airlangga', 2010),
-(2, 'B002', 'ketika cinta bertasbih', 'ipin', 10, 1, 'U', 'Indonesia', 'no 2', 'Yudistira', 2011),
-(3, 'B003', 'php', 'andi', 10, 5, 'R', 'Indonesia', 'no 3', 'andi', 2010),
+(1, 'B001', 'ayat-ayat cinta', 'fahirah', 10, 4, 'U', 'Indonesia', 'no 1', 'airlangga', 2010),
+(2, 'B002', 'ketika cinta bertasbih', 'ipin', 10, 0, 'U', 'Indonesia', 'no 2', 'Yudistira', 2011),
+(3, 'B003', 'php', 'andi', 10, 4, 'R', 'Indonesia', 'no 3', 'andi', 2010),
 (4, 'B004', 'mysql dan php', 'upin', 5, 2, 'R', 'Inggris', 'no 4', 'andi', 2013),
 (6, 'B005', 'teknologi informasi', 'internet saja', 2, 2, 'U', 'Indonesia', 'no 5', 'andi', 2010),
 (7, 'B006', 'pemrograman visual', 'fahirah', 12, 10, 'R', 'Indonesia', 'no 6', 'yudistira', 2014),
@@ -100,6 +100,19 @@ INSERT INTO `tbl_buku` (`id_buku`, `kode_buku`, `judul_buku`, `pengarang_buku`, 
 (10, 'B009', 'tom n jerry', 'nazir', 2, 0, 'U', 'Indonesia', 'no 9', 'andi', 2010),
 (11, 'B010', 'html dasar', 'iraa', 9, 0, 'U', 'Indonesia', 'iiiiiiii', 'andi', 2010),
 (13, 'B012', 'css 3', 'ipin', 10, 0, 'U', '', '9ooooo', 'aaa', 0000);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `tbl_denda`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_denda` (
+  `kode_denda` int(11) NOT NULL AUTO_INCREMENT,
+  `id_detail_peminjaman` int(11) NOT NULL,
+  `denda` int(11) NOT NULL,
+  PRIMARY KEY (`kode_denda`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -116,20 +129,15 @@ CREATE TABLE IF NOT EXISTS `tbl_detail_peminjaman` (
   `tgl_pengembalian` date DEFAULT NULL,
   `denda` int(11) DEFAULT NULL,
   PRIMARY KEY (`id_detail_peminjaman`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data untuk tabel `tbl_detail_peminjaman`
 --
 
 INSERT INTO `tbl_detail_peminjaman` (`id_detail_peminjaman`, `kode_peminjaman`, `id_buku`, `tgl_pinjam`, `tgl_kembali`, `tgl_pengembalian`, `denda`) VALUES
-(1, 1, 1, '2014-12-05', '2014-12-12', '0000-00-00', 0),
-(2, 1, 2, '2014-12-05', '2014-12-12', '0000-00-00', 0),
-(3, 1, 3, '2014-12-05', '2014-12-12', '0000-00-00', 0),
-(4, 2, 9, '2014-12-05', '2014-12-12', '0000-00-00', 0),
-(5, 2, 3, '2014-12-05', '2014-12-12', '0000-00-00', 0),
-(6, 3, 6, '2014-12-05', '2014-12-12', '0000-00-00', 0),
-(7, 4, 3, '2014-12-05', '2014-12-12', '0000-00-00', 0);
+(1, 1, 1, '2014-12-06', '2015-01-24', '0000-00-00', 0),
+(2, 1, 3, '2014-12-06', '2015-01-24', '0000-00-00', 0);
 
 -- --------------------------------------------------------
 
@@ -182,10 +190,7 @@ CREATE TABLE IF NOT EXISTS `tbl_peminjaman_pengembalian` (
 --
 
 INSERT INTO `tbl_peminjaman_pengembalian` (`kode_peminjaman`, `id_anggota`, `id_petugas`, `status_peminjaman`) VALUES
-(1, '2', 1, 'pinjam'),
-(2, '3', 1, 'pinjam'),
-(3, '4', 1, 'pinjam'),
-(4, '3', 1, 'pinjam');
+(1, '2', 1, 'pinjam');
 
 -- --------------------------------------------------------
 

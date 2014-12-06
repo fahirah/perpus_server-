@@ -76,15 +76,28 @@ class PeminjamanModel extends ModelBase {
 	
 	public function view_detilpjm($kode){
 		$r=array();
-		$hasil=$this->db->query("SELECT * FROM tbl_detail_peminjaman where kode_peminjaman='$kode'");
 		
+		$ambilan=$this->db->query("SELECT * FROM tbl_peminjaman_pengembalian where kode_peminjaman='$kode'",true);
+		$idan=$ambilan->id_anggota;
+		$ambilan=$this->db->query("SELECT * from tbl_anggota where id_anggota='".$idan."'", TRUE);
+		$nama = $ambilan-> nama_anggota;
+		
+		$hasil=$this->db->query("SELECT * FROM tbl_detail_peminjaman where kode_peminjaman='$kode'");
+	
 		if(! $hasil)  return FALSE;		
 		
 		for($i=0; $i<count($hasil);$i++){
 			$d=$hasil[$i];
 				
+			$idbk=$d->id_buku;
+			$ambilbk=$this->db->query("SELECT * from tbl_buku where id_buku='".$idbk."'", TRUE);
+			$kode_buku = $ambilbk-> kode_buku;
+			$judul = $ambilbk->judul_buku;
+				
 			$r[]=array(
 				'id_buku'=>$d->id_buku,
+				'kd_buku'=>$kode_buku,
+				'judul'=>$judul,
 				'tgl_pinjam'=>datedb_to_tanggal($d->tgl_pinjam, 'd-F-Y'),
 				'tgl_kembali'=>datedb_to_tanggal($d->tgl_kembali, 'd-F-Y'),
 				'tgl_pengembalian' => ($d->tgl_pengembalian == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_pengembalian, 'd-m-Y')),
@@ -92,7 +105,24 @@ class PeminjamanModel extends ModelBase {
 			);
 		}
 		
-		return $r;
+		//return $r;
+			return array(
+			'kode_pinjam' => $kode,
+			'id_anggota' => $idan,
+			'nama_anggota' => $nama,
+			'data' =>$r
+		);
+	}
+	
+	public function perpanjang_pjm($kodepjm, $kodebk){		
+		$hasil=$this->db->query("select * from tbl_detail_peminjaman where kode_peminjaman='$kodepjm' and id_buku='$kodebk'",true);
+		//$tgl = $hasil->tgl_kembali;
+		//$tgl_kembali=date($tgl, time() + (7 * 24 * 60 * 60));
+		$lalu = datedb_to_tanggal($hasil->tgl_kembali, 'U');
+		$tambah = date('Y-m-d', + ($lalu + (7 * 24 * 60 * 60)));
+		$edit=$this->db->query("update tbl_detail_peminjaman set tgl_kembali='$tambah' where kode_peminjaman='$kodepjm' and id_buku='$kodebk'");
+	
+		//return view_peminjaman();
 	}
 
 }

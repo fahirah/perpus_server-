@@ -241,3 +241,18 @@ $app->get('/detailpjm/:kode', function($kode) use ($app,$ctr) {
 	json_output($app, $r);
 });
 
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: perpanjang peminjaman
+ */
+$app->options('/perpanjangpjm/:kodepjm/:kodebk', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/perpanjangpjm/:kodepjm/:kodebk', function($kodepjm, $kodebk) use ($app,$ctr) {
+	$ctr->load('model','peminjaman');
+	$ctr->load('helper', 'date');
+	$r=$ctr->PeminjamanModel->perpanjang_pjm($kodepjm, $kodebk);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
