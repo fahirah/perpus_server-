@@ -54,6 +54,20 @@ $app->post('/login', function() use ($app,$ctr) {
 
 // ----------------------------------------------------------------
 /**
+ * Method: POST
+ * Verb: file
+ */
+$app->post('/file', function() use ($app,$ctr) {
+	$ctr->load('model','file');
+	$ctr->load('file', 'lib/IOFiles.php');
+	$iofiles = new IOFiles();
+	
+	$r=$ctr->FileModel->tambah_file($iofiles);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
  * Method: GET
  * Verb: anggota
  */
@@ -256,3 +270,31 @@ $app->get('/perpanjangpjm/:kodepjm/:kodebk', function($kodepjm, $kodebk) use ($a
 	json_output($app, $r);
 });
 
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: kembali peminjaman
+ */
+$app->options('/kembalipjm/:kodepjm/:kodebk', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/kembalipjm/:kodepjm/:kodebk', function($kodepjm, $kodebk) use ($app,$ctr) {
+	$ctr->load('model','peminjaman');
+	$ctr->load('helper', 'date');
+	$r=$ctr->PeminjamanModel->kembali_pjm($kodepjm, $kodebk);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: DELETE
+ * Verb: peminjaman
+ */
+$app->options('/admin/peminjaman/:kode', function() use($app) { $app->status(200); $app->stop(); });
+$app->delete('/admin/peminjaman/:kode', function($kode) use ($app,$ctr) {
+	$ctr->load('model','peminjaman');
+	$r=$ctr->PeminjamanModel->delete_peminjaman($kode);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});

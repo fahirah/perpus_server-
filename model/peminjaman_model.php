@@ -16,12 +16,12 @@ class PeminjamanModel extends ModelBase {
 		//total halaman
 		$tdph=20;
 	
-		$totalhalaman=$this->db->query("select count(kode_peminjaman) as hasil from tbl_peminjaman_pengembalian",true);
+		$totalhalaman=$this->db->query("select count(kode_peminjaman) as hasil from tbl_peminjaman_pengembalian where id_anggota like '%{$kata}%'",true);
 				
 		$numpagepjm=ceil($totalhalaman->hasil/$tdph);
 		$start=$cpagepjm*$tdph;
 		$r=array();
-		$hasil=$this->db->query("SELECT * FROM tbl_peminjaman_pengembalian limit $start,$tdph");
+		$hasil=$this->db->query("SELECT * FROM tbl_peminjaman_pengembalian where id_anggota like '%{$kata}%' limit $start,$tdph");
 		
 		if(count($hasil)<=0)  return FALSE;
 		else{		
@@ -85,7 +85,7 @@ class PeminjamanModel extends ModelBase {
 		$hasil=$this->db->query("SELECT * FROM tbl_detail_peminjaman where kode_peminjaman='$kode'");
 	
 		if(! $hasil)  return FALSE;		
-		
+		$bayar=500;
 		for($i=0; $i<count($hasil);$i++){
 			$d=$hasil[$i];
 				
@@ -93,7 +93,20 @@ class PeminjamanModel extends ModelBase {
 			$ambilbk=$this->db->query("SELECT * from tbl_buku where id_buku='".$idbk."'", TRUE);
 			$kode_buku = $ambilbk-> kode_buku;
 			$judul = $ambilbk->judul_buku;
-				
+			$id=$d->id_detail_peminjaman;
+			$tgl=$d->tgl_kembali;	
+			$tgl_pengembalian=$d->tgl_pengembalian;
+			$ambilhr=$this->db->query("select datediff(now(), '$tgl') as jumlah from tbl_detail_peminjaman where id_detail_peminjaman='$id'",true);
+			$jum_hari=$ambilhr->jumlah;
+			if($tgl_pengembalian=='0000-00-00'){
+				if($jum_hari>=0){
+					$denda="Rp. ".($jum_hari*$bayar).",00";				
+				}else{
+					$denda="Rp. 0,00";
+				}					
+			}else{
+				$denda="-";
+			}
 			$r[]=array(
 				'id_buku'=>$d->id_buku,
 				'kd_buku'=>$kode_buku,
@@ -101,7 +114,7 @@ class PeminjamanModel extends ModelBase {
 				'tgl_pinjam'=>datedb_to_tanggal($d->tgl_pinjam, 'd-F-Y'),
 				'tgl_kembali'=>datedb_to_tanggal($d->tgl_kembali, 'd-F-Y'),
 				'tgl_pengembalian' => ($d->tgl_pengembalian == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_pengembalian, 'd-m-Y')),
-				'denda'=>$d->denda
+				'denda'=>$denda
 			);
 		}
 		
@@ -116,13 +129,40 @@ class PeminjamanModel extends ModelBase {
 	
 	public function perpanjang_pjm($kodepjm, $kodebk){		
 		$hasil=$this->db->query("select * from tbl_detail_peminjaman where kode_peminjaman='$kodepjm' and id_buku='$kodebk'",true);
-		//$tgl = $hasil->tgl_kembali;
-		//$tgl_kembali=date($tgl, time() + (7 * 24 * 60 * 60));
 		$lalu = datedb_to_tanggal($hasil->tgl_kembali, 'U');
 		$tambah = date('Y-m-d', + ($lalu + (7 * 24 * 60 * 60)));
 		$edit=$this->db->query("update tbl_detail_peminjaman set tgl_kembali='$tambah' where kode_peminjaman='$kodepjm' and id_buku='$kodebk'");
+	}
+
+	public function kembali_pjm($kodepjm, $kodebk){		
+		$hasil=$this->db->query("select * from tbl_detail_peminjaman where kode_peminjaman='$kodepjm' and id_buku='$kodebk'",true);
+		$editbk=$this->db->query("update tbl_buku set sisa_stok_buku = sisa_stok_buku + 1 where id_buku='$kodebk'");
+		$editpjm=$this->db->query("update tbl_detail_peminjaman set tgl_pengembalian=now() where kode_peminjaman='$kodepjm' and id_buku='$kodebk'");
+		
+		$ambiltgl=$this->db->query("select * from tbl_detail_peminjaman where kode_peminjaman='$kodepjm'");
+		$htg=0;
 	
-		//return view_peminjaman();
+		$jumlah=count($ambiltgl);
+		for($i=0;$i<$jumlah;$i++){
+			$d=$ambiltgl[$i];
+			if($d->tgl_pengembalian != '0000-00-00') $htg++;
+		}
+		if($htg==$jumlah){
+			$editstts=$this->db->query("update tbl_peminjaman_pengembalian set status_peminjaman='kembali' where kode_peminjaman='$kodepjm'");
+		}
+	}
+	
+	public function delete_peminjaman($kode){
+		$kode = floatval($kode);
+		$hasil=$this->db->query("select * from tbl_detail_peminjaman where kode_peminjaman='$kode'");
+		for($i=0;$i<count($hasil);$i++){
+			$d=$hasil[$i];
+			$kodebk=$d->id_buku;
+			$editbk=$this->db->query("update tbl_buku set sisa_stok_buku = sisa_stok_buku + 1 where id_buku='$kodebk'");
+		}
+		
+		$this->db->query("delete from tbl_detail_peminjaman where kode_peminjaman='$kode'");
+		$this->db->query("delete from tbl_peminjaman_pengembalian where kode_peminjaman='$kode'");
 	}
 
 }
