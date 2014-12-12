@@ -54,6 +54,34 @@ $app->post('/login', function() use ($app,$ctr) {
 
 // ----------------------------------------------------------------
 /**
+ * Method: GET
+ * Verb: buku
+ */
+$app->options('/user/buku', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/user/buku', function() use ($app,$ctr) {
+	$ctr->load('model','main');
+	$r=$ctr->MainModel->view_buku();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: file
+ */
+$app->options('/user/file', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/user/file', function() use ($app,$ctr) {
+	$ctr->load('model','main');
+	$r=$ctr->MainModel->view_file();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
  * Method: POST
  * Verb: file
  */
@@ -65,6 +93,35 @@ $app->post('/file', function() use ($app,$ctr) {
 	$r=$ctr->FileModel->tambah_file($iofiles);
 	json_output($app, $r);
 });
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: download file
+ */
+$app->options('/download/:id/:user', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/download/:id/:user', function($id,$user) use ($app,$ctr) {
+	$ctr->load('model','main');
+	$ctr->load('file', 'lib/IOFiles.php');
+	$iofiles = new IOFiles();
+	$r=$ctr->MainModel->download_file($id,$user,$iofiles);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: peminjaman
+ */
+$app->options('/user/peminjaman/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/user/peminjaman/:id', function($id) use ($app,$ctr) {
+	$ctr->load('model','main');
+	$ctr->load('helper', 'date');
+	$r=$ctr->MainModel->view_peminjaman($id);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
 
 // ----------------------------------------------------------------
 /**
@@ -210,6 +267,20 @@ $app->options('/admin/peminjaman', function() use($app) { $app->status(200); $ap
 $app->get('/admin/peminjaman', function() use ($app,$ctr) {
 	$ctr->load('model','peminjaman');
 	$r=$ctr->PeminjamanModel->view_peminjaman();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: cekanggota
+ */
+$app->options('/cekanggota/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/cekanggota/:id', function($id) use ($app,$ctr) {
+	$ctr->load('model','peminjaman');
+	$r=$ctr->PeminjamanModel->cek_anggota($id);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);

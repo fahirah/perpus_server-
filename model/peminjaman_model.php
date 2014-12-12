@@ -27,10 +27,14 @@ class PeminjamanModel extends ModelBase {
 		else{		
 			for($i=0; $i<count($hasil);$i++){
 				$d=$hasil[$i];
+				$idang=$d->id_anggota;
+				$ambilan=$this->db->query("SELECT * from tbl_anggota where id_anggota='".$idang."'", true);
+				$nama = $ambilan-> nama_anggota;
 				
 				$r[]=array(
 					'kode'=>$d->kode_peminjaman,
-					'idang'=>$d->id_anggota,
+					'idang'=>$idang,
+					'nmang'=>$nama
 				);
 			}
 			return array(
@@ -40,6 +44,26 @@ class PeminjamanModel extends ModelBase {
 		}
 	}	
 		
+	public function cek_anggota($id){
+		$d=$this->db->query("SELECT * FROM tbl_anggota where id_anggota='$id'",true);		
+		if(! $d)  return FALSE;				
+		
+		$ambilkdp=$this->db->query("select * from tbl_peminjaman_pengembalian where id_anggota='$id' and status_peminjaman='pinjam'");
+		$htg=0;
+		if(count($ambilkdp)>0){
+			for($i=0;$i<count($ambilkdp);$i++){
+				$h=$ambilkdp[$i];
+				$kodep=$h->kode_peminjaman;
+				$ambiljum=$this->db->query("select count(id_detail_peminjaman) as jum from tbl_detail_peminjaman where kode_peminjaman='$kodep'",true);
+				$jum=$ambiljum->jum;
+				$htg+=$jum;
+			}
+		}
+		$ambilpgtrn=$this->db->query("select * from tbl_pengaturan", true);
+		$jumpjm=$ambilpgtrn->jumlah_buku;
+		if($htg>$jumpjm) return FALSE;
+	}
+	
 	public function view_detilbuku($kode){
 		$r=array();
 		$d=$this->db->query("SELECT * FROM tbl_buku where kode_buku='$kode' and sisa_stok_buku!=0 ",true);
@@ -81,11 +105,13 @@ class PeminjamanModel extends ModelBase {
 		$idan=$ambilan->id_anggota;
 		$ambilan=$this->db->query("SELECT * from tbl_anggota where id_anggota='".$idan."'", TRUE);
 		$nama = $ambilan-> nama_anggota;
+		$stts = $ambilan->status_anggota;
 		
 		$hasil=$this->db->query("SELECT * FROM tbl_detail_peminjaman where kode_peminjaman='$kode'");
 	
 		if(! $hasil)  return FALSE;		
-		$bayar=500;
+		$ambilbyr=$this->db->query("select * from tbl_pengaturan",true);
+		$bayar=$ambilbyr->bayar_denda;
 		for($i=0; $i<count($hasil);$i++){
 			$d=$hasil[$i];
 				
@@ -98,12 +124,16 @@ class PeminjamanModel extends ModelBase {
 			$tgl_pengembalian=$d->tgl_pengembalian;
 			$ambilhr=$this->db->query("select datediff(now(), '$tgl') as jumlah from tbl_detail_peminjaman where id_detail_peminjaman='$id'",true);
 			$jum_hari=$ambilhr->jumlah;
-			if($tgl_pengembalian=='0000-00-00'){
-				if($jum_hari>=0){
-					$denda="Rp. ".($jum_hari*$bayar).",00";				
+			if($stts=='mahasiswa'){
+				if($tgl_pengembalian=='0000-00-00'){
+					if($jum_hari>=0){
+						$denda="Rp. ".($jum_hari*$bayar).",00";				
+					}else{
+						$denda="Rp. 0,00";
+					}					
 				}else{
-					$denda="Rp. 0,00";
-				}					
+					$denda="-";
+				}
 			}else{
 				$denda="-";
 			}
@@ -119,7 +149,7 @@ class PeminjamanModel extends ModelBase {
 		}
 		
 		//return $r;
-			return array(
+		return array(
 			'kode_pinjam' => $kode,
 			'id_anggota' => $idan,
 			'nama_anggota' => $nama,
@@ -131,7 +161,8 @@ class PeminjamanModel extends ModelBase {
 		$hasil=$this->db->query("select * from tbl_detail_peminjaman where kode_peminjaman='$kodepjm' and id_buku='$kodebk'",true);
 		$lalu = datedb_to_tanggal($hasil->tgl_kembali, 'U');
 		$tambah = date('Y-m-d', + ($lalu + (7 * 24 * 60 * 60)));
-		$edit=$this->db->query("update tbl_detail_peminjaman set tgl_kembali='$tambah' where kode_peminjaman='$kodepjm' and id_buku='$kodebk'");
+		$bxk=($hasil->banyak_perpanjang)+1;
+		$edit=$this->db->query("update tbl_detail_peminjaman set tgl_kembali='$tambah', banyak_perpanjang='$bxk' where kode_peminjaman='$kodepjm' and id_buku='$kodebk'");
 	}
 
 	public function kembali_pjm($kodepjm, $kodebk){		

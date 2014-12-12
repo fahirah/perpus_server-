@@ -10,19 +10,36 @@ class AnggotaModel extends ModelBase {
 	}
 	
 	public function view_anggota() {
-		extract($this->prepare_get(array('cpage','kata')));
+		extract($this->prepare_get(array('cpage','kata','jenis')));
 		$kata=$this->db->escape_str($kata);
+		$jenis=$this->db->escape_str($jenis);
 		$cpage = floatval($cpage);
 		//total halaman
 		$tdph=20;
-		$totalhalaman=$this->db->query("select count(id_anggota) as hasil from tbl_anggota where nama_anggota like '%{$kata}%' ",true);
+		if(empty($jenis)){
+			$totalhalaman=$this->db->query("select count(id_anggota) as hasil from tbl_anggota where nama_anggota like '%{$kata}%' or id_anggota like '%{$kata}%' or no_identitas like '%{$kata}%' ",true);
+		}else if($jenis=="no"){
+			$totalhalaman=$this->db->query("select count(id_anggota) as hasil from tbl_anggota where no_identitas like '%{$kata}%' ",true);
+		}else if($jenis=="id"){
+			$totalhalaman=$this->db->query("select count(id_anggota) as hasil from tbl_anggota where id_anggota like '%{$kata}%' ",true);
+		}else if($jenis=="nama"){
+			$totalhalaman=$this->db->query("select count(id_anggota) as hasil from tbl_anggota where nama_anggota like '%{$kata}%' ",true);
+		}
 		$numpage=ceil($totalhalaman->hasil/$tdph);
 		$start=$cpage*$tdph;
 		
 		$r=array();
 		//$p=array();
+		if(empty($jenis)){
+			$hasil=$this->db->query("select * from tbl_anggota where nama_anggota like '%{$kata}%' or id_anggota like '%{$kata}%' or no_identitas like '%{$kata}%' limit $start,$tdph");
+		}else if($jenis=="no"){
+			$hasil=$this->db->query("select * from tbl_anggota where no_identitas like '%{$kata}%' limit $start,$tdph");
+		}else if($jenis=="id"){
+			$hasil=$this->db->query("select * from tbl_anggota where id_anggota like '%{$kata}%' limit $start,$tdph");
+		}else if($jenis=="nama"){
+			$hasil=$this->db->query("select * from tbl_anggota where nama_anggota like '%{$kata}%' limit $start,$tdph");
+		}
 		
-		$hasil=$this->db->query("SELECT * FROM tbl_anggota where nama_anggota like '%{$kata}%' limit $start,$tdph");
 		if(count($hasil)<=0)  return FALSE;
 		else{
 			for($i=0; $i<count($hasil);$i++){

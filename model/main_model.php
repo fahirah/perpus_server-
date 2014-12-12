@@ -127,43 +127,88 @@ class MainModel extends ModelBase {
 		$password=$this->db->escape_str($password);
 		
 		//query ke database
-	if($status==2){
-		$hasil=$this->db->query("SELECT * from tbl_petugas where username='".$username."' and password_petugas='".$password."'",TRUE);
-		$id = $hasil->id_petugas;
-		if(count($hasil)<=0)  return FALSE;
-		else return array(
-			'token'=> crypt($username, $password),
-			'id'=>$id,
-			'status'=>2
-		);
-	}else if($status==1){
-		$hasil=$this->db->query("SELECT * from tbl_anggota where no_identitas='".$username."' and password_anggota='".$password."'",TRUE);
-		$id = $hasil->id_anggota;
-		if(count($hasil)<=0)  return FALSE;
-		else return array(
-			'token'=> crypt($username, $password),
-			'id'=>$id,
-			'status'=>1,
-			'level'=>$hasil->status_anggota
-		);
-	}
-	else{
-		return FALSE;
-	}
-	}	
-	
-	public function view_prodi() {
-		$r=array();
-		$hasil=$this->db->query("SELECT * FROM tbl_prodi");
-		for($i=0; $i<count($hasil);$i++){
-			$d=$hasil[$i];
-			
-			$r[]=array(
-				'kode'=>$d->kode_prodi,
-				'nama'=>$d->nama_prodi,
+		if($status==2){
+			$hasil=$this->db->query("SELECT * from tbl_petugas where username='".$username."' and password_petugas='".$password."'",TRUE);
+			$id = $hasil->id_petugas;
+			if(count($hasil)<=0)  return FALSE;
+			else return array(
+				'token'=> crypt($username, $password),
+				'id'=>$id,
+				'status'=>2
 			);
+		}else if($status==1){
+			$hasil=$this->db->query("SELECT * from tbl_anggota where no_identitas='".$username."' and password_anggota='".$password."'",TRUE);
+			$id = $hasil->id_anggota;
+			if(count($hasil)<=0)  return FALSE;
+			else return array(
+				'token'=> crypt($username, $password),
+				'id'=>$id,
+				'status'=>1,
+				'level'=>$hasil->status_anggota
+			);
+		}else{
+			return FALSE;
 		}
-		return $r;
 	}
+	
+	public function download_file($id,$user,$iofiles){
+		$ambilfile=$this->db->query("select nama_file from tbl_file where kode_file='$id'",true);
+		$nama=$ambilfile->nama_file;
+		
+		$input=$this->db->query("insert into tbl_aktivitas values(null, '$id', '$id',now())");
+		
+		
+		$iofiles->download($nama);
+		
+	}
+	
+	public function view_peminjaman($id) {		
+		$r=array();
+		$ambilbyr=$this->db->query("select * from tbl_pengaturan",true);
+		$bayar=$ambilbyr->bayar_denda;
+		
+		$ambilkd=$this->db->query("select * from tbl_peminjaman_pengembalian where id_anggota='$id' and status_peminjaman='pinjam'");
+		if(count($ambilkd)<=0) return FALSE;
+		else{
+			for($j=0;$j<count($ambilkd);$j++){
+				$e=$ambilkd[$j];
+				$kodepjm=$e->kode_peminjaman;
+				$hasil=$this->db->query("SELECT * FROM tbl_detail_peminjaman where kode_peminjaman='$kodepjm'");
+				for($i=0; $i<count($hasil);$i++){
+					$d=$hasil[$i];
+					
+					$idbuku=$d->id_buku;
+					$ambilbk=$this->db->query("select kode_buku,judul_buku from tbl_buku where id_buku='$idbuku'",true);
+					$kdbuku=$ambilbk->kode_buku;
+					$judul=$ambilbk->judul_buku;
+					
+					$tglkembali=$d->tgl_kembali;	
+					$tgl_pengembalian=$d->tgl_pengembalian;	
+					$iddetail=$d->id_detail_peminjaman;
+					$ambilhr=$this->db->query("select datediff(now(), '$tglkembali') as jumlah from tbl_detail_peminjaman where id_detail_peminjaman='$id'",true);
+					$jum_hari=$ambilhr->jumlah;
+					if($tgl_pengembalian=='0000-00-00'){
+						if($jum_hari>=0){
+							$denda="Rp. ".($jum_hari*$bayar).",00";				
+						}else{
+							$denda="Rp. 0,00";
+						}					
+					}else{
+						$denda='-';
+					}
+			
+					$r[]=array(
+						'idbuku'=>$kdbuku,
+						'judul'=>$judul,
+						'tgl_pinjam'=>datedb_to_tanggal($d->tgl_pinjam, 'd-F-Y'),
+						'tgl_kembali'=>datedb_to_tanggal($d->tgl_kembali, 'd-F-Y'),
+						'denda'=>$denda
+					);
+				}
+				return $r;
+			}
+		}
+	}
+
 }
 
