@@ -11,6 +11,124 @@ class MainModel extends ModelBase {
 		parent::__construct();
 	}
 	
+	public function view_prodi() {
+		$r=array();
+		$hasil=$this->db->query("SELECT * FROM tbl_prodi");
+		for($i=0; $i<count($hasil);$i++){
+			$d=$hasil[$i];
+			
+			$r[]=array(
+				'kode'=>$d->kode_prodi,
+				'nama'=>$d->nama_prodi,
+			);
+		}
+		return $r;
+	}
+
+	public function view_pencarian() {
+		extract($this->prepare_get(array('cpagebk','cpagefl','judul','pengarang','penerbit','isbn','tipe')));
+		$judul=$this->db->escape_str($judul);
+		$pengarang=$this->db->escape_str($pengarang);
+		$penerbit=$this->db->escape_str($penerbit);
+		$tipe=$this->db->escape_str($tipe);
+		$cpagebk = floatval($cpagebk);
+		$cpagefl = floatval($cpagefl);
+		//total halaman
+		$tdph=20;
+		
+		$where = array();
+		if ( ! empty($judul)) $where[] = "judul_buku like '%{$judul}%'";
+		if ( ! empty($pengarang)) $where[] = "pengarang_buku like '%{$pengarang}%'";
+		if ( ! empty($pengerbit)) $where[] = "penerbit_buku like '%{$penerbit}%'";
+		if ( ! empty($isbn)) $where[] = "isbn_buku like '%{$isbn}%'";
+		
+		$sqlcount = "select count(id_buku) as hasil from tbl_buku";
+		$sql = "SELECT * FROM tbl_buku";
+		
+		if ( ! empty($where)) {
+			$sqlcount .= " WHERE " . implode(' OR ', $where);
+			$sql .= " WHERE " . implode(' OR ', $where);
+		}
+		
+		$totalhalaman=$this->db->query($sqlcount,true);
+		
+		$numpagebk=ceil($totalhalaman->hasil/$tdph);
+		$start=$cpagebk*$tdph;
+		$r=array();
+		
+		$hasil=$this->db->query($sql . " limit $start,$tdph");
+		
+		if(count($hasil)<=0)  return FALSE;
+		else{
+			for($i=0; $i<count($hasil);$i++){
+				$d=$hasil[$i];
+				
+				$r[]=array(
+					'kode'=>$d->kode_buku,
+					'isbn'=>$d->isbn_buku,
+					'judul'=>$d->judul_buku,
+					'pengarang'=>$d->pengarang_buku,
+					'stok'=>$d->sisa_stok_buku,
+					'macam'=>$d->macam_buku,
+					'bahasa'=>$d->bahasa_buku,
+					'penerbit'=>$d->penerbit_buku,
+					'tahun'=>$d->tahun_terbit_buku
+				);
+			}
+		}
+		
+		$wherefl = array();
+		if ( ! empty($judul)) $wherefl[] = "judul_file like '%{$judul}%'";
+		if ( ! empty($pengarang)) $wherefl[] = "pengarang_file like '%{$pengarang}%'";
+		if ( ! empty($pengerbit)) $wherefl[] = "penerbit_file like '%{$penerbit}%'";
+		
+		$sqlcountfl = "select count(kode_file) as hasil from tbl_file";
+		$sqlfl = "SELECT * FROM tbl_file";
+		
+		if ( ! empty($wherefl)) {
+			$sqlcountfl .= " WHERE " . implode(' OR ', $wherefl);
+			$sqlfl .= " WHERE " . implode(' OR ', $wherefl);
+		}
+	
+		$totalhalamanfl=$this->db->query($sqlcountfl,true);
+		
+		$numpagefl=ceil($totalhalamanfl->hasil/$tdph);
+		$start=$cpagefl*$tdph;
+		$p=array();
+		
+		$hasilfl=$this->db->query($sqlfl . " limit $start,$tdph");
+		
+		if(count($hasil)<=0)  return FALSE;
+		else{
+			for($i=0; $i<count($hasilfl);$i++){
+				$d=$hasilfl[$i];
+				
+				$p[]=array(
+					'kode'=>$d->kode_file,
+					'judul'=>$d->judul_file,
+					'pengarang'=>$d->pengarang_file,
+					'macam'=>$d->macam_file,
+					'bahasa'=>$d->bahasa_file,
+					'penerbit'=>$d->penerbit_file,
+					'tahun'=>$d->tahun_terbit_file,
+					'tgl'=>date('d-m-Y', strtotime($d->tgl_upload)),
+					'ringkasan'=>$d->ringkasan
+				);
+			}
+		}
+		
+		return array(
+			'buku' => array(
+				'data' => $r,
+				'numpagebk' => $numpagebk
+			),
+			'file' => array(
+				'data' => $p,
+				'numpagefl' => $numpagefl
+			)
+		);
+	}
+	
 	public function view_buku() {
 		extract($this->prepare_get(array('cpagebk','kata','jenis')));
 		$kata=$this->db->escape_str($kata);

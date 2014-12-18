@@ -13,6 +13,20 @@ $app->get('/', function() use ($app) {
 // ----------------------------------------------------------------
 /**
  * Method: GET
+ * Verb: pencarian
+ */
+$app->options('/pencarian', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/pencarian', function() use ($app,$ctr) {
+	$ctr->load('model','main');
+	$r=$ctr->MainModel->view_pencarian();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
  * Verb: buku
  */
 $app->options('/buku', function() use($app) { $app->status(200); $app->stop(); });
@@ -197,7 +211,10 @@ $app->get('/admin/buku', function() use ($app,$ctr) {
  */
 $app->post('/admin/buku', function() use ($app,$ctr) {
 	$ctr->load('model','buku');
-	$r=$ctr->BukuModel->tambah_buku();
+	$ctr->load('buku', 'lib/IOFiles.php');
+	$iofiles = new IOFiles();
+	
+	$r=$ctr->BukuModel->tambah_buku($iofiles);
 	json_output($app, $r);
 });
 
@@ -291,10 +308,25 @@ $app->get('/cekanggota/:id', function($id) use ($app,$ctr) {
  * Method: GET
  * Verb: cekbuku
  */
-$app->options('/cekbuku/:kode', function() use($app) { $app->status(200); $app->stop(); });
-$app->get('/cekbuku/:kode', function($kode) use ($app,$ctr) {
+$app->options('/cekbuku/:kode/:idan', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/cekbuku/:kode/:idan', function($kode,$idan) use ($app,$ctr) {
 	$ctr->load('model','peminjaman');
-	$r=$ctr->PeminjamanModel->view_detilbuku($kode);
+	$r=$ctr->PeminjamanModel->view_detilbuku($kode,$idan);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: detailbuku
+ */
+$app->options('/detailbuku/:kode', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/detailbuku/:kode', function($kode) use ($app,$ctr) {
+	$ctr->load('model','buku');
+	$ctr->load('helper', 'date');
+	$r=$ctr->BukuModel->view_detildatabuku($kode);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
@@ -365,6 +397,35 @@ $app->options('/admin/peminjaman/:kode', function() use($app) { $app->status(200
 $app->delete('/admin/peminjaman/:kode', function($kode) use ($app,$ctr) {
 	$ctr->load('model','peminjaman');
 	$r=$ctr->PeminjamanModel->delete_peminjaman($kode);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: pengaturan
+ */
+$app->options('/admin/pengaturan', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/admin/pengaturan', function() use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->view_pengaturan();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: POST
+ * Verb: pengaturan
+ */
+$app->options('/admin/pengaturan', function() use($app) { $app->status(200); $app->stop(); });
+$app->post('/admin/pengaturan', function() use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->ubah_pengaturan();
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);

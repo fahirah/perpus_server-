@@ -30,10 +30,12 @@ class PeminjamanModel extends ModelBase {
 				$idang=$d->id_anggota;
 				$ambilan=$this->db->query("SELECT * from tbl_anggota where id_anggota='".$idang."'", true);
 				$nama = $ambilan-> nama_anggota;
+				$noid = $ambilan->no_identitas;
 				
 				$r[]=array(
 					'kode'=>$d->kode_peminjaman,
 					'idang'=>$idang,
+					'noid'=>$noid,
 					'nmang'=>$nama
 				);
 			}
@@ -45,9 +47,11 @@ class PeminjamanModel extends ModelBase {
 	}	
 		
 	public function cek_anggota($id){
-		$d=$this->db->query("SELECT * FROM tbl_anggota where id_anggota='$id'",true);		
-		if(! $d)  return FALSE;				
-		
+		$d=$this->db->query("SELECT * FROM tbl_anggota where id_anggota='$id'",true);	
+		if(! $d){
+			$d2=$this->db->query("SELECT * FROM tbl_anggota where no_identitas='$id'",true);
+			if(! $d2) return FALSE;	
+		}
 		$ambilkdp=$this->db->query("select * from tbl_peminjaman_pengembalian where id_anggota='$id' and status_peminjaman='pinjam'");
 		$htg=0;
 		if(count($ambilkdp)>0){
@@ -64,11 +68,27 @@ class PeminjamanModel extends ModelBase {
 		if($htg>$jumpjm) return FALSE;
 	}
 	
-	public function view_detilbuku($kode){
+	public function view_detilbuku($kode,$idan){
 		$r=array();
-		$d=$this->db->query("SELECT * FROM tbl_buku where kode_buku='$kode' and sisa_stok_buku!=0 ",true);
+		$cekang=$this->db->query("select id_anggota, status_anggota from tbl_anggota where id_anggota='$idan'", true);
+		if(! $cekang){
+			$d2=$this->db->query("select id_anggota, status_anggota FROM tbl_anggota where no_identitas='$idan'",true);
+			$idan=$d2->id_anggota;	
+			$status= $d2->status_anggota;
+		}else{
+			$status= $cekang->status_anggota;
+		}
+		
+		$d=$this->db->query("select * from tbl_buku where kode_buku='$kode' and sisa_stok_buku!=0 ",true);
 		
 		if(! $d)  return FALSE;				
+		$ambilhr=$this->db->query("select lama_pinjam from tbl_pengaturan",true);
+		$lama=floatval($ambilhr->lama_pinjam);
+		if($status=="m"){
+			$tgl_kembali=date('Y-m-d', time() + ($lama * 24 * 60 * 60));
+		}else{
+			$tgl_kembali='-';
+		}
 		
 		return array(
 			'id'=>$d->id_buku,
@@ -76,7 +96,7 @@ class PeminjamanModel extends ModelBase {
 			'judul'=>$d->judul_buku,
 			'stok'=>$d->stok_buku,
 			'tgl_pinjam'=>date('d-m-Y'),
-			'tgl_kembali'=>date('d-m-Y', time() + (7 * 24 * 60 * 60))
+			'tgl_kembali'=>$tgl_kembali
 		);
 	}
 	
@@ -85,9 +105,24 @@ class PeminjamanModel extends ModelBase {
 		$cek=$this->db->query("select max(kode_peminjaman) as kdpj from tbl_peminjaman_pengembalian",true);
 		$kdpjm=floatval($cek->kdpj)+1;
 		
-		$ins=$this->db->query("INSERT INTO tbl_peminjaman_pengembalian VALUES($kdpjm,'$anggota', '$idp','pinjam')");
+		$cekang=$this->db->query("select id_anggota, status_anggota from tbl_anggota where id_anggota='$anggota'", true);
+		if(! $cekang){
+			$d2=$this->db->query("select id_anggota, status_anggota FROM tbl_anggota where no_identitas='$anggota'",true);
+			$anggota=$d2->id_anggota;	
+			$status= $d2->status_anggota;
+		}else{
+			$status= $cekang->status_anggota;
+		}
+		
+		$ins=$this->db->query("insert into tbl_peminjaman_pengembalian VALUES($kdpjm,'$anggota', '$idp','pinjam')");
+		$ambilhr=$this->db->query("select lama_pinjam from tbl_pengaturan",true);
+		$lama=floatval($ambilhr->lama_pinjam);
 		$tgl_pinjam=date('Y-m-d');
-		$tgl_kembali=date('Y-m-d', time() + (7 * 24 * 60 * 60));
+		if($status=="m"){
+			$tgl_kembali=date('Y-m-d', time() + ($lama * 24 * 60 * 60));
+		}else{
+			$tgl_kembali=0000-00-00;
+		}
 		
 		foreach($buku as $key => $judul){
 			$edit=$this->db->query("update tbl_buku set sisa_stok_buku = sisa_stok_buku - 1 where id_buku='$judul'");
@@ -106,6 +141,7 @@ class PeminjamanModel extends ModelBase {
 		$ambilan=$this->db->query("SELECT * from tbl_anggota where id_anggota='".$idan."'", TRUE);
 		$nama = $ambilan-> nama_anggota;
 		$stts = $ambilan->status_anggota;
+		$noid = $ambilan->no_identitas;
 		
 		$hasil=$this->db->query("SELECT * FROM tbl_detail_peminjaman where kode_peminjaman='$kode'");
 	
@@ -142,7 +178,7 @@ class PeminjamanModel extends ModelBase {
 				'kd_buku'=>$kode_buku,
 				'judul'=>$judul,
 				'tgl_pinjam'=>datedb_to_tanggal($d->tgl_pinjam, 'd-F-Y'),
-				'tgl_kembali'=>datedb_to_tanggal($d->tgl_kembali, 'd-F-Y'),
+				'tgl_kembali'=>($d->tgl_kembali == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_kembali, 'd-F-Y')),
 				'tgl_pengembalian' => ($d->tgl_pengembalian == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_pengembalian, 'd-m-Y')),
 				'denda'=>$denda
 			);
@@ -152,6 +188,7 @@ class PeminjamanModel extends ModelBase {
 		return array(
 			'kode_pinjam' => $kode,
 			'id_anggota' => $idan,
+			'no_identitas' => $noid,
 			'nama_anggota' => $nama,
 			'data' =>$r
 		);
