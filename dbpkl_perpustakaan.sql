@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Waktu pembuatan: 19. Desember 2014 jam 14:08
+-- Waktu pembuatan: 20. Desember 2014 jam 00:08
 -- Versi Server: 5.5.16
 -- Versi PHP: 5.3.8
 
@@ -32,15 +32,20 @@ CREATE TABLE IF NOT EXISTS `tbl_aktivitas` (
   `kode_file` int(11) NOT NULL,
   `tgl_download` date NOT NULL,
   PRIMARY KEY (`kode_aktivitas`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
 --
 -- Dumping data untuk tabel `tbl_aktivitas`
 --
 
 INSERT INTO `tbl_aktivitas` (`kode_aktivitas`, `id_anggota`, `kode_file`, `tgl_download`) VALUES
-(1, 1, 2, '2014-12-01'),
-(2, 2, 2, '2014-12-17');
+(1, 2, 2, '2014-12-20'),
+(2, 9, 9, '2014-12-20'),
+(3, 2, 2, '2014-12-20'),
+(4, 3, 3, '2014-12-20'),
+(5, 4, 4, '2014-12-20'),
+(6, 5, 5, '2014-12-20'),
+(7, 9, 9, '2014-12-20');
 
 -- --------------------------------------------------------
 
@@ -57,19 +62,20 @@ CREATE TABLE IF NOT EXISTS `tbl_anggota` (
   `jeniskelamin_anggota` varchar(15) NOT NULL,
   `status_anggota` varchar(10) NOT NULL,
   `kode_prodi` int(11) NOT NULL,
-  `password_anggota` varchar(15) NOT NULL,
+  `password_anggota` varchar(50) NOT NULL,
   PRIMARY KEY (`id_anggota`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 --
 -- Dumping data untuk tabel `tbl_anggota`
 --
 
 INSERT INTO `tbl_anggota` (`id_anggota`, `nama_anggota`, `no_identitas`, `alamat_anggota`, `telp_anggota`, `jeniskelamin_anggota`, `status_anggota`, `kode_prodi`, `password_anggota`) VALUES
-(1, 'dani', '1155201878', 'parteker', '0817508901', 'P', 'm', 1, '1155201878'),
-(2, 'susi', '1155201854', 'palenga''an', '0817501245', 'P', 'm', 1, '1155201854'),
-(3, 'iis', '1155201870', 'pasean', '081738391', 'P', 'm', 2, '1155201870'),
-(4, 'nazir', '0011', 'bluto', '0879504948', 'L', 'd', 1, '0011');
+(1, 'dani', '1155201878', 'parteker', '0817508901', 'P', 'm', 1, '98b827ef43e156e04c262e24a86dfbee'),
+(2, 'susi', '1155201854', 'palenga''an', '0817501245', 'P', 'm', 1, '220ee574c0b0075ac195b3b052abefe4'),
+(3, 'iis', '1155201870', 'pasean', '081738391', 'P', 'm', 2, '2fb902020ccae5312653ede8e580f373'),
+(4, 'nazir', '00011', 'bluto', '0879504948', 'L', 'd', 1, '85cf77b36c41e3f038dd4883f71bca2f'),
+(5, 'arifin', '00012', 'pamekasan', '087648392', 'L', 'd', 2, 'c11e93d2f88e9e393d5008f1e313a974');
 
 -- --------------------------------------------------------
 
@@ -171,7 +177,7 @@ CREATE TABLE IF NOT EXISTS `tbl_file` (
   `id_petugas` int(11) NOT NULL,
   `id_anggota` int(11) NOT NULL,
   PRIMARY KEY (`kode_file`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
 
 --
 -- Dumping data untuk tabel `tbl_file`
@@ -181,7 +187,10 @@ INSERT INTO `tbl_file` (`kode_file`, `nama_file`, `judul_file`, `pengarang_file`
 (2, 'berkas/07dbd3204b3a92738ad2c53f6f4b7892.docx', 'modul 1 algoritma pemrograman', 'badar said, s.kom', 'R', 'Indonesia', '', 2010, 'algoritma pemrograman. . .', '2014-12-16', 1, 0),
 (3, 'berkas/a0da8852d53a2fa13f8c396237e5bd11.docx', 'rekayasa perangkat lunak', 'eka nurhayati, S.kom', 'U', 'Indonesia', '', 2011, 'rpl adalah. . .', '2014-12-16', 1, 0),
 (4, 'berkas/fecc302417161ad316f8b274306cedf7.xlsx', 'modul simulasi', 'erwin prasetyowati', 'U', 'Indonesia', '', 2011, 'model simulasi. . .', '2014-12-19', 1, 0),
-(5, 'berkas/f88794eedf3b2855e8fbf07d11662e0e.docx', 'jaringan saraf tiruan', 'anang hermansyah', 'R', 'Inggris', '', 2010, 'jst adalah. . .', '2014-12-19', 1, 0);
+(5, 'berkas/f88794eedf3b2855e8fbf07d11662e0e.docx', 'jaringan saraf tiruan', 'anang hermansyah', 'R', 'Inggris', '', 2010, 'jst adalah. . .', '2014-12-19', 1, 0),
+(6, 'berkas/500aceed7ff2e8241415b626824a8754.xlsx', 'struktur data I', 'nazir arifin', 'U', 'Indonesia', '', 2011, 'struktur data. . .', '2014-12-19', 0, 4),
+(7, 'berkas/', 'analisa desain SI', 'muhammad', 'U', 'Indonesia', '', 2000, 'analisa desain SI. . .', '2014-12-19', 0, 4),
+(9, 'berkas/d7cafeedf68e4c212e56156fb28e2fac.docx', 'beton', 'arifin', 'R', 'Indonesia', '', 2014, 'beton. . .', '2014-12-19', 0, 5);
 
 -- --------------------------------------------------------
 
@@ -244,7 +253,7 @@ CREATE TABLE IF NOT EXISTS `tbl_petugas` (
   `jeniskelamin_petugas` varchar(15) NOT NULL,
   `telp_petugas` varchar(15) NOT NULL,
   `username` varchar(15) NOT NULL,
-  `password_petugas` varchar(15) NOT NULL,
+  `password_petugas` varchar(50) NOT NULL,
   PRIMARY KEY (`id_petugas`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
@@ -253,7 +262,7 @@ CREATE TABLE IF NOT EXISTS `tbl_petugas` (
 --
 
 INSERT INTO `tbl_petugas` (`id_petugas`, `nama_petugas`, `jeniskelamin_petugas`, `telp_petugas`, `username`, `password_petugas`) VALUES
-(1, 'fahirah', 'Perempuan', '081931635887', 'admin', 'admin');
+(1, 'fahirah', 'Perempuan', '081931635887', 'admin', '21232f297a57a5a743894a0e4a801fc3');
 
 -- --------------------------------------------------------
 

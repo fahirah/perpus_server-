@@ -78,13 +78,13 @@ class AnggotaModel extends ModelBase {
 		$gender=$this->db->escape_str($gender);
 		$status=$this->db->escape_str($status);
 		$id = floatval($id);
-		
+		$pw=md5($identitas);
 		if (empty($id)) {
 			//insert
-			$ins=$this->db->query("INSERT INTO tbl_anggota VALUES(0,'$nama','$identitas','$alamat','$telp','$gender','$status','$prodi','$identitas')");
+			$ins=$this->db->query("INSERT INTO tbl_anggota VALUES(0,'$nama','$identitas','$alamat','$telp','$gender','$status','$prodi','$pw')");
 		} else {
 			// edit
-			$edit=$this->db->query("update tbl_anggota set nama_anggota='$nama', no_identitas='$identitas', alamat_anggota='$alamat',telp_anggota='$telp', jeniskelamin_anggota='$gender', status_anggota='$status', kode_prodi='$prodi' where id_anggota='$id'");
+			$edit=$this->db->query("update tbl_anggota set nama_anggota='$nama', no_identitas='$identitas', alamat_anggota='$alamat',telp_anggota='$telp', jeniskelamin_anggota='$gender', status_anggota='$status', kode_prodi='$prodi',password_anggota='$pw' where id_anggota='$id'");
 		}
 		return $this->view_anggota();
 	}
@@ -92,5 +92,12 @@ class AnggotaModel extends ModelBase {
 	public function delete_anggota($id){
 		$id = floatval($id);
 		$this->db->query("delete from tbl_anggota where id_anggota='$id'");
+	}
+	
+	public function reset_password($id){
+		$id = floatval($id);
+		$ambilno=$this->db->query("select no_identitas from tbl_anggota where id_anggota='$id'",true);
+		$no=md5($ambilno->no_identitas);
+		$this->db->query("update tbl_anggota set password_anggota='$no' where id_anggota='$id'");
 	}
 }

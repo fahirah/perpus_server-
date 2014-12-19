@@ -228,7 +228,8 @@ class MainModel extends ModelBase {
 					'penerbit'=>$d->penerbit_file,
 					'tahun'=>$d->tahun_terbit_file,
 					'tgl'=>date('d-m-Y', strtotime($d->tgl_upload)),
-					'ringkasan'=>$d->ringkasan
+					'ringkasan'=>$d->ringkasan,
+					'idp'=>$d->id_anggota
 				);
 			}
 			return array(
@@ -244,22 +245,24 @@ class MainModel extends ModelBase {
 		$username=$this->db->escape_str($username);
 		$password=$this->db->escape_str($password);
 		
+		$pw=md5($password);
+		
 		//query ke database
 		if($status==2){
-			$hasil=$this->db->query("SELECT * from tbl_petugas where username='".$username."' and password_petugas='".$password."'",TRUE);
+			$hasil=$this->db->query("SELECT * from tbl_petugas where username='".$username."' and password_petugas='".$pw."'",TRUE);
 			$id = $hasil->id_petugas;
 			if(count($hasil)<=0)  return FALSE;
 			else return array(
-				'token'=> crypt($username, $password),
+				'token'=> crypt($username, $pw),
 				'id'=>$id,
 				'status'=>2
 			);
 		}else if($status==1){
-			$hasil=$this->db->query("SELECT * from tbl_anggota where no_identitas='".$username."' and password_anggota='".$password."'",TRUE);
+			$hasil=$this->db->query("SELECT * from tbl_anggota where no_identitas='".$username."' and password_anggota='".$pw."'",TRUE);
 			$id = $hasil->id_anggota;
 			if(count($hasil)<=0)  return FALSE;
 			else return array(
-				'token'=> crypt($username, $password),
+				'token'=> crypt($username, $pw),
 				'id'=>$id,
 				'status'=>1,
 				'level'=>$hasil->status_anggota
@@ -278,6 +281,13 @@ class MainModel extends ModelBase {
 		
 		$iofiles->download($nama);
 		
+	}
+	
+	public function delete_file($id){
+		$id = floatval($id);
+		$ambil=$this->db->query("select nama_file from tbl_file where kode_file='$id'",true);
+		@unlink($ambil->nama_file);
+		$this->db->query("delete from tbl_file where kode_file='$id'");
 	}
 	
 	public function view_peminjaman($id) {		

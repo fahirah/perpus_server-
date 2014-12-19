@@ -123,6 +123,21 @@ $app->get('/download/:id/:user', function($id,$user) use ($app,$ctr) {
 
 // ----------------------------------------------------------------
 /**
+ * Method: DELETE
+ * Verb: file
+ */
+$app->options('/user/file/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->delete('/user/file/:id', function($id) use ($app,$ctr) {
+	$ctr->load('model','main');
+	$r=$ctr->MainModel->delete_file($id);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+
+// ----------------------------------------------------------------
+/**
  * Method: GET
  * Verb: peminjaman
  */
@@ -199,6 +214,21 @@ $app->options('/admin/buku', function() use($app) { $app->status(200); $app->sto
 $app->get('/admin/buku', function() use ($app,$ctr) {
 	$ctr->load('model','buku');
 	$r=$ctr->BukuModel->view_buku();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+
+// ----------------------------------------------------------------
+/**
+ * Method: POST
+ * Verb: reset password anggota
+ */
+$app->options('/admin/anggota/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->post('/admin/anggota/:id', function($id) use ($app,$ctr) {
+	$ctr->load('model','anggota');
+	$r=$ctr->AnggotaModel->reset_password($id);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
