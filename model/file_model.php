@@ -45,9 +45,11 @@ class FileModel extends ModelBase {
 		else{		
 			for($i=0; $i<count($hasil);$i++){
 				$d=$hasil[$i];
-				
+				$kode=$d->kode_file;
+				$ambiljml=$this->db->query("select count(kode_file) as jumlah from tbl_aktivitas where kode_file='$kode'",true);
+				$jumlah=$ambiljml->jumlah;
 				$r[]=array(
-					'id'=>$d->kode_file,
+					'id'=>$kode,
 					'nama'=>$d->nama_file,
 					'judul'=>$d->judul_file,
 					'pengarang'=>$d->pengarang_file,
@@ -55,6 +57,7 @@ class FileModel extends ModelBase {
 					'bahasa'=>$d->bahasa_file,
 					'penerbit'=>$d->penerbit_file,
 					'tahun'=>$d->tahun_terbit_file,
+					'jumlah'=>$jumlah,
 					'ringkasan'=>$d->ringkasan,
 					'tgl'=>date('d-m-Y', strtotime($d->tgl_upload))
 				);
@@ -64,6 +67,53 @@ class FileModel extends ModelBase {
 			'numpagefl' => $numpagefl
 			);
 		}
+	}
+	
+	public function view_detildatafile($kode) {
+		$r=array();
+		$d=$this->db->query("select * from tbl_file where kode_file='$kode'",true);
+		
+		if(! $d)  return FALSE;				
+		
+		$r[]=array(
+			'id'=>$d->kode_file,
+			'nama'=>$d->nama_file,
+			'judul'=>$d->judul_file,
+			'pengarang'=>$d->pengarang_file,
+			'macam'=>$d->macam_file,
+			'bahasa'=>$d->bahasa_file,
+			'penerbit'=>$d->penerbit_file,
+			'tahun'=>$d->tahun_terbit_file,
+			'ringkasan'=>$d->ringkasan,
+			'tgl'=>date('d-m-Y', strtotime($d->tgl_upload))
+		);
+		
+		$p=array();		
+		$ambilfl=$this->db->query("select * from tbl_aktivitas where kode_file='$kode'");
+		if(count($ambilfl)>0){
+			for($j=0;$j<count($ambilfl);$j++){
+				$e=$ambilfl[$j];
+				$idan=$e->id_anggota;
+				$ambilnm=$this->db->query("select no_identitas, nama_anggota, status_anggota from tbl_anggota where id_anggota='$idan'",true);
+				$noid=$ambilnm->no_identitas;
+				$nama=$ambilnm->nama_anggota;
+				$nama=$ambilnm->nama_anggota;
+				$status=($ambilnm->status_anggota == 'm' ? 'Mahasiswa' : 'Dosen');
+
+				$p[]=array(
+					'kd'=>$e->kode_aktivitas,
+					'idan'=>$idan,
+					'noid'=>$noid,
+					'nama'=>$nama,
+					'status'=>$status,
+					'tgl_download'=>datedb_to_tanggal($e->tgl_download, 'd-F-Y')
+				);
+			}
+		}
+		return array(
+			'data' =>$r,
+			'datadownload'=>$p
+		);
 	}
 	
 	public function tambah_file($iofiles){

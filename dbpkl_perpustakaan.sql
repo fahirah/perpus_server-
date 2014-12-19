@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Waktu pembuatan: 18. Desember 2014 jam 13:45
+-- Waktu pembuatan: 19. Desember 2014 jam 14:08
 -- Versi Server: 5.5.16
 -- Versi PHP: 5.3.8
 
@@ -32,7 +32,15 @@ CREATE TABLE IF NOT EXISTS `tbl_aktivitas` (
   `kode_file` int(11) NOT NULL,
   `tgl_download` date NOT NULL,
   PRIMARY KEY (`kode_aktivitas`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data untuk tabel `tbl_aktivitas`
+--
+
+INSERT INTO `tbl_aktivitas` (`kode_aktivitas`, `id_anggota`, `kode_file`, `tgl_download`) VALUES
+(1, 1, 2, '2014-12-01'),
+(2, 2, 2, '2014-12-17');
 
 -- --------------------------------------------------------
 
@@ -74,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `tbl_buku` (
   `kode_buku` varchar(20) NOT NULL,
   `isbn_buku` varchar(30) NOT NULL,
   `sampul_buku` varchar(60) NOT NULL,
-  `judul_buku` varchar(30) NOT NULL,
+  `judul_buku` varchar(60) NOT NULL,
   `pengarang_buku` varchar(30) NOT NULL,
   `stok_buku` int(11) NOT NULL,
   `sisa_stok_buku` int(11) NOT NULL,
@@ -84,18 +92,19 @@ CREATE TABLE IF NOT EXISTS `tbl_buku` (
   `penerbit_buku` varchar(20) NOT NULL,
   `tahun_terbit_buku` year(4) NOT NULL,
   PRIMARY KEY (`id_buku`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 --
 -- Dumping data untuk tabel `tbl_buku`
 --
 
 INSERT INTO `tbl_buku` (`id_buku`, `kode_buku`, `isbn_buku`, `sampul_buku`, `judul_buku`, `pengarang_buku`, `stok_buku`, `sisa_stok_buku`, `macam_buku`, `bahasa_buku`, `no_penempatan`, `penerbit_buku`, `tahun_terbit_buku`) VALUES
-(1, 'B001', '979-518-692-1', 'sampul/a.jpg', 'pendidikan agama islam', 'amiruddin', 8, 6, 'U', 'Indonesia', '297.77/AMI/p/', 'ghalia indonesia', 2002),
+(1, 'B001', '979-518-692-1', 'sampul/83631baa9ad7de2048ea52c2eae97de8.jpg', 'pendidikan agama islam I', 'amiruddin', 8, 6, 'U', 'Indonesia', '270/ami/p/', 'ghalia indonesia', 2002),
 (2, 'B002', '979-518-661-1', 'sampul/a.jpg', 'basis data', 'janner simarmata', 10, 10, 'R', 'Indonesia', '270.70/sim/b/', 'andi', 2010),
-(3, 'B003', '979-518-713-2', 'sampul/a.jpg', 'cara belajar yang sukses', 'burhanuddin salim', 5, 3, 'U', 'Indonesia', '371.1/sal/c/', 'rineka cipta', 2010),
-(4, 'B004', '12345', 'sampul/17a22b0f5adb0c70b7e50ed377ec8534.jpg', 'php dasar', 'imam', 8, 6, 'U', 'Indonesia', '', 'andi', 2011),
-(6, 'B009', 'uuuuuuuuu', 'sampul/dd2ee660e1a949c67075ddee855ed0ec.jpg', 'jjjjjjjjjjj', 'jjjjjjjjjjjjjj', 9, 9, 'U', 'Indonesia', '', 'kkkkkkkkk', 2010);
+(3, 'B003', '979-518-713-2', 'sampul/a.jpg', 'css3', 'burhanuddin salim', 5, 3, 'U', 'Indonesia', '260.1/bur/c', 'rineka cipta', 2010),
+(4, 'B004', '12345', 'sampul/17a22b0f5adb0c70b7e50ed377ec8534.jpg', 'php dasar', 'imam', 8, 6, 'U', 'Indonesia', '230/ima/p', 'andi', 2011),
+(7, 'B005', '970-09-20-1', 'sampul/sampul_buku.jpg', 'html 5', 'ipin', 5, 5, 'U', 'Indonesia', '290/ipi/h/', 'andi', 2011),
+(8, 'B006', '789-08-801', 'sampul/sampul_buku.jpg', 'jQuery', 'muhammad', 5, 5, 'U', 'Indonesia', '701/muh/j/', 'andi', 2011);
 
 -- --------------------------------------------------------
 
@@ -169,8 +178,10 @@ CREATE TABLE IF NOT EXISTS `tbl_file` (
 --
 
 INSERT INTO `tbl_file` (`kode_file`, `nama_file`, `judul_file`, `pengarang_file`, `macam_file`, `bahasa_file`, `penerbit_file`, `tahun_terbit_file`, `ringkasan`, `tgl_upload`, `id_petugas`, `id_anggota`) VALUES
-(2, 'berkas/974f352156f94544051f8e5a0f20d5fa.docx', 'modul 1 alpro', 'badar said', 'R', 'Indonesia', '', 2010, 'algoritma pemrograman. . .', '2014-12-16', 1, 0),
-(3, 'berkas/48f75a47d2ec2925f250962235550814.docx', 'rekayasa perangkat lunak', 'eka nurhayati', 'U', 'Inggris', '', 2011, 'rpl adalah. . . . .', '2014-12-16', 1, 0);
+(2, 'berkas/07dbd3204b3a92738ad2c53f6f4b7892.docx', 'modul 1 algoritma pemrograman', 'badar said, s.kom', 'R', 'Indonesia', '', 2010, 'algoritma pemrograman. . .', '2014-12-16', 1, 0),
+(3, 'berkas/a0da8852d53a2fa13f8c396237e5bd11.docx', 'rekayasa perangkat lunak', 'eka nurhayati, S.kom', 'U', 'Indonesia', '', 2011, 'rpl adalah. . .', '2014-12-16', 1, 0),
+(4, 'berkas/fecc302417161ad316f8b274306cedf7.xlsx', 'modul simulasi', 'erwin prasetyowati', 'U', 'Indonesia', '', 2011, 'model simulasi. . .', '2014-12-19', 1, 0),
+(5, 'berkas/f88794eedf3b2855e8fbf07d11662e0e.docx', 'jaringan saraf tiruan', 'anang hermansyah', 'R', 'Inggris', '', 2010, 'jst adalah. . .', '2014-12-19', 1, 0);
 
 -- --------------------------------------------------------
 

@@ -334,6 +334,21 @@ $app->get('/detailbuku/:kode', function($kode) use ($app,$ctr) {
 
 // ----------------------------------------------------------------
 /**
+ * Method: GET
+ * Verb: detailbuku
+ */
+$app->options('/detailfile/:kode', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/detailfile/:kode', function($kode) use ($app,$ctr) {
+	$ctr->load('model','file');
+	$ctr->load('helper', 'date');
+	$r=$ctr->FileModel->view_detildatafile($kode);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
  * Method: POST
  * Verb: peminjaman
  */
