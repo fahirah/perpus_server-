@@ -55,6 +55,9 @@ class BukuModel extends ModelBase {
 				$id=$d->id_buku;
 				$ambiljml=$this->db->query("select count(id_buku) as jumlah from tbl_detail_peminjaman where id_buku='$id'",true);
 				$jumlah=$ambiljml->jumlah;
+				$penempatan=$d->no_penempatan;
+				$pn=explode("/",$penempatan);
+				
 				$r[]=array(
 					'id'=>$id,
 					'kode'=>$d->kode_buku,
@@ -62,11 +65,10 @@ class BukuModel extends ModelBase {
 					'sampul'=>$d->sampul_buku,
 					'judul'=>$d->judul_buku,
 					'pengarang'=>$d->pengarang_buku,
-					'stok'=>$d->stok_buku,
-					'sisa'=>$d->sisa_stok_buku,
 					'macam'=>$d->macam_buku,
 					'bahasa'=>$d->bahasa_buku,
-					'penempatan'=>$d->no_penempatan,
+					'penempatan'=>$pn[0],
+					'pn'=>$penempatan,
 					'penerbit'=>$d->penerbit_buku,
 					'tahun'=>$d->tahun_terbit_buku, 
 					'jumlah'=>$jumlah
@@ -92,8 +94,6 @@ class BukuModel extends ModelBase {
 			'sampul'=>$d->sampul_buku,
 			'judul'=>$d->judul_buku,
 			'pengarang'=>$d->pengarang_buku,
-			'stok'=>$d->stok_buku,
-			'sisa'=>$d->sisa_stok_buku,
 			'macam'=>$d->macam_buku,
 			'bahasa'=>$d->bahasa_buku,
 			'penempatan'=>$d->no_penempatan,
@@ -141,6 +141,7 @@ class BukuModel extends ModelBase {
 		$bahasa=$this->db->escape_str($bahasa);
 		$penerbit=$this->db->escape_str($penerbit);
 		$id = floatval($id);
+		$stok = floatval($stok);
 		
 		$config['upload_path']   = 'sampul/';
 		$config['allowed_types'] = 'jpg|jpeg|png';
@@ -155,31 +156,45 @@ class BukuModel extends ModelBase {
 		$a=explode(",", $pengarang);
 		$b=explode(" ",$a[0]);
 		$c=(count($b))-1;		
-		$d=substr($b[$c],0,3);
+		$d=strtoupper(substr($b[$c],0,3));
 		
-		$e=substr($judul,0,1);
+		$e=strtoupper(substr($judul,0,1));
 		$nopnmptn=$penempatan."/".$d."/".$e;
 		if (empty($id)) {
 			//insert
-			$cek=$this->db->query("SELECT * FROM tbl_buku where kode_buku='$kode'");
-			if(count($cek)>0)  return FALSE;
-			else{
-				if($filename != null){
-					$ins=$this->db->query("INSERT INTO tbl_buku VALUES(0,'$kode','$isbn','$filepath','$judul','$pengarang','$stok','$stok','$macam','$bahasa','$nopnmptn','$penerbit','$tahun')");
+			for($i=1;$i<=$stok;$i++){
+				$cek=$this->db->query("select max(kode_buku) as kdbk from tbl_buku",true);
+				$kdbk=$cek->kdbk;
+				if($kdbk==''){
+					$kodebk=1;
 				}else{
-					$ins=$this->db->query("INSERT INTO tbl_buku VALUES(0,'$kode','$isbn','sampul/sampul_buku.jpg','$judul','$pengarang','$stok','$stok','$macam','$bahasa','$nopnmptn','$penerbit','$tahun')");
+					$kodebk=substr($kdbk,1,4);
+					$kodebk++;
+				}
+				$kodebr="B".sprintf("%04s",$kodebk);
+				$pn=$nopnmptn."/C.".$i;
+				if($filename != null){
+					$ins=$this->db->query("INSERT INTO tbl_buku VALUES(0,'$kodebr','$isbn','$filepath','$judul','$pengarang','$macam','$bahasa','$pn','$penerbit','$tahun')");
+				}else{
+					$ins=$this->db->query("INSERT INTO tbl_buku VALUES(0,'$kodebr','$isbn','sampul/sampul_buku.jpg','$judul','$pengarang','$macam','$bahasa','$pn','$penerbit','$tahun')");
 				}
 				// panggil
-				generate_barcode($kode);
+				generate_barcode($kodebr);
 			}
+			
 		} else {
 			// edit
-			$ambil=$this->db->query("select sampul_buku from tbl_buku where id_buku='$id'",true);
+			$ambil=$this->db->query("select sampul_buku, no_penempatan from tbl_buku where id_buku='$id'",true);
+			$nopn=$ambil->no_penempatan;
+			$a=explode("/",$nopn);
+			$c=$a[3];
+			$pnp=$nopnmptn."/".$c;
 			if($filename != null){
 				@unlink($ambil->sampul_buku);
-				$edit=$this->db->query("update tbl_buku set isbn_buku='$isbn', kode_buku='$kode', sampul_buku='$filepath', judul_buku='$judul', pengarang_buku='$pengarang',stok_buku='$stok', macam_buku='$macam', bahasa_buku='$bahasa', no_penempatan='$penempatan', penerbit_buku='$penerbit', tahun_terbit_buku='$tahun' where id_buku='$id'");
+				
+				$edit=$this->db->query("update tbl_buku set isbn_buku='$isbn', kode_buku='$kode', sampul_buku='$filepath', judul_buku='$judul', pengarang_buku='$pengarang', macam_buku='$macam', bahasa_buku='$bahasa', no_penempatan='$pnp', penerbit_buku='$penerbit', tahun_terbit_buku='$tahun' where id_buku='$id'");
 			}else{
-				$edit=$this->db->query("update tbl_buku set isbn_buku='$isbn', kode_buku='$kode',judul_buku='$judul', pengarang_buku='$pengarang',stok_buku='$stok', macam_buku='$macam', bahasa_buku='$bahasa', no_penempatan='$penempatan', penerbit_buku='$penerbit', tahun_terbit_buku='$tahun' where id_buku='$id'");
+				$edit=$this->db->query("update tbl_buku set isbn_buku='$isbn', kode_buku='$kode',judul_buku='$judul', pengarang_buku='$pengarang', macam_buku='$macam', bahasa_buku='$bahasa', no_penempatan='$pnp', penerbit_buku='$penerbit', tahun_terbit_buku='$tahun' where id_buku='$id'");
 			}
 		}
 		return $this->view_buku();

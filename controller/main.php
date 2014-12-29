@@ -199,6 +199,7 @@ $app->get('/admin/anggota', function() use ($app,$ctr) {
  */
 $app->post('/admin/anggota', function() use ($app,$ctr) {
 	$ctr->load('model','anggota');
+	$ctr->load('file', 'lib/barcode.php');
 	$r=$ctr->AnggotaModel->tambah_anggota();
 	json_output($app, $r);
 });
@@ -229,6 +230,17 @@ $app->delete('/admin/anggota/:id', function($id) use ($app,$ctr) {
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: cetak kartu anggota
+ */
+$app->options('/cetak/anggota/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/cetak/anggota/:id', function($id) use ($app,$ctr) {
+	$ctr->load('model','cetak');
+	$ctr->CetakModel->cetak_kartuanggota($id);
 });
 
 // ----------------------------------------------------------------

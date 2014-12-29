@@ -80,8 +80,13 @@ class AnggotaModel extends ModelBase {
 		$id = floatval($id);
 		$pw=md5($identitas);
 		if (empty($id)) {
+			$cek=$this->db->query("select max(id_anggota) as idan from tbl_anggota",true);
+			$idan=$cek->idan;
+			$idan++;
 			//insert
-			$ins=$this->db->query("INSERT INTO tbl_anggota VALUES(0,'$nama','$identitas','$alamat','$telp','$gender','$status','$prodi','$pw')");
+			$ins=$this->db->query("INSERT INTO tbl_anggota VALUES('$idan','$nama','$identitas','$alamat','$telp','$gender','$status','$prodi','$pw')");
+			
+			generate_barcode($idan);
 		} else {
 			// edit
 			$edit=$this->db->query("update tbl_anggota set nama_anggota='$nama', no_identitas='$identitas', alamat_anggota='$alamat',telp_anggota='$telp', jeniskelamin_anggota='$gender', status_anggota='$status', kode_prodi='$prodi',password_anggota='$pw' where id_anggota='$id'");

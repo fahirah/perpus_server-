@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Waktu pembuatan: 29. Desember 2014 jam 04:00
+-- Waktu pembuatan: 29. Desember 2014 jam 16:00
 -- Versi Server: 5.5.16
 -- Versi PHP: 5.3.8
 
@@ -32,17 +32,14 @@ CREATE TABLE IF NOT EXISTS `tbl_aktivitas` (
   `kode_file` int(11) NOT NULL,
   `tgl_download` date NOT NULL,
   PRIMARY KEY (`kode_aktivitas`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 --
 -- Dumping data untuk tabel `tbl_aktivitas`
 --
 
 INSERT INTO `tbl_aktivitas` (`kode_aktivitas`, `id_anggota`, `kode_file`, `tgl_download`) VALUES
-(1, 5, 5, '2014-12-25'),
-(2, 4, 4, '2014-12-26'),
-(3, 13, 13, '2014-12-27'),
-(4, 5, 5, '2014-12-27');
+(1, 1, 1, '2014-12-29');
 
 -- --------------------------------------------------------
 
@@ -61,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `tbl_anggota` (
   `kode_prodi` int(11) NOT NULL,
   `password_anggota` varchar(50) NOT NULL,
   PRIMARY KEY (`id_anggota`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
 
 --
 -- Dumping data untuk tabel `tbl_anggota`
@@ -72,7 +69,8 @@ INSERT INTO `tbl_anggota` (`id_anggota`, `nama_anggota`, `no_identitas`, `alamat
 (2, 'susi', '1155201854', 'palenga''an', '0817501245', 'P', 'm', 1, '220ee574c0b0075ac195b3b052abefe4'),
 (3, 'iis', '1155201870', 'pasean', '081738391', 'P', 'm', 2, '2fb902020ccae5312653ede8e580f373'),
 (4, 'nazir', '00011', 'bluto sumenep', '0879504948', 'L', 'd', 1, '85cf77b36c41e3f038dd4883f71bca2f'),
-(5, 'arifin', '00012', 'pamekasan', '087648392', 'L', 'd', 2, 'c11e93d2f88e9e393d5008f1e313a974');
+(5, 'arifin', '00012', 'pamekasan', '087648392', 'L', 'd', 2, 'c11e93d2f88e9e393d5008f1e313a974'),
+(6, 'wahyu', '0955201701', 'ghazali', '081791719', 'L', 'm', 2, '09ca228e29d4fb9b291ee8f28d6b8908');
 
 -- --------------------------------------------------------
 
@@ -87,8 +85,6 @@ CREATE TABLE IF NOT EXISTS `tbl_buku` (
   `sampul_buku` varchar(60) NOT NULL,
   `judul_buku` varchar(60) NOT NULL,
   `pengarang_buku` varchar(30) NOT NULL,
-  `stok_buku` int(11) NOT NULL,
-  `sisa_stok_buku` int(11) NOT NULL,
   `macam_buku` varchar(10) NOT NULL,
   `bahasa_buku` varchar(10) NOT NULL,
   `no_penempatan` varchar(20) NOT NULL,
@@ -101,13 +97,14 @@ CREATE TABLE IF NOT EXISTS `tbl_buku` (
 -- Dumping data untuk tabel `tbl_buku`
 --
 
-INSERT INTO `tbl_buku` (`id_buku`, `kode_buku`, `isbn_buku`, `sampul_buku`, `judul_buku`, `pengarang_buku`, `stok_buku`, `sisa_stok_buku`, `macam_buku`, `bahasa_buku`, `no_penempatan`, `penerbit_buku`, `tahun_terbit_buku`) VALUES
-(1, 'B001', '979-518-692-1', 'sampul/83631baa9ad7de2048ea52c2eae97de8.jpg', 'pendidikan agama islam I', 'amiruddin', 8, 6, 'U', 'Indonesia', '270/ami/p/', 'ghalia indonesia', 2002),
-(2, 'B002', '979-518-661-1', 'sampul/e6afbd5b848f27ab25ce8c53412acc17.jpg', 'basis data', 'janner simarmata', 10, 8, 'R', 'Indonesia', '270.70/sim/b/', 'andi', 2010),
-(3, 'B003', '979-518-713-2', 'sampul/e6afbd5b848f27ab25ce8c53412acc17.jpg', 'css3', 'burhanuddin salim', 5, 4, 'U', 'Indonesia', '260.1/bur/c', 'rineka cipta', 2010),
-(4, 'B004', '12345', 'sampul/17a22b0f5adb0c70b7e50ed377ec8534.jpg', 'php dasar', 'imam', 8, 7, 'U', 'Indonesia', '230/ima/p', 'andi', 2011),
-(7, 'B005', '970-09-20-1', 'sampul/sampul_buku.jpg', 'html 5', 'ipin', 5, 5, 'U', 'Indonesia', '290/ipi/h/', 'andi', 2011),
-(8, 'B006', '789-08-801', 'sampul/sampul_buku.jpg', 'jQuery', 'muhammad', 5, 5, 'U', 'Indonesia', '701/muh/j/', 'andi yogya', 2011);
+INSERT INTO `tbl_buku` (`id_buku`, `kode_buku`, `isbn_buku`, `sampul_buku`, `judul_buku`, `pengarang_buku`, `macam_buku`, `bahasa_buku`, `no_penempatan`, `penerbit_buku`, `tahun_terbit_buku`) VALUES
+(1, 'B0001', '979-230-79', 'sampul/5343480f8271297844220ed5b1bd99e5.jpg', 'pendidikan agama islam I', 'aminuddin, dkk', 'U', 'Indonesia', '299.77/AMI/P/C.1', 'ghalia indonesia', 2010),
+(3, 'B0003', '987-090-10', 'sampul/93e0c0f0dd62dfddca0cac9fc0ecc7af.jpg', 'php dasar', 'rokhim, S.kom', 'U', 'Indonesia', '201/ROK/P/C.1', 'andi', 2011),
+(4, 'B0004', '970-45-091', 'sampul/sampul_buku.jpg', 'aaaaa', 'bbbbb', 'U', 'Indonesia', '230/BBB/A/C.1', 'andi', 2010),
+(5, 'B0005', '970-45-091', 'sampul/sampul_buku.jpg', 'aaaaa', 'bbbbb', 'U', 'Indonesia', '230/BBB/A/C.2', 'andi', 2010),
+(6, 'B0006', '9870-189-192', 'sampul/3836871b580e64c7930aa2299d798319.jpg', 'bbbbbb', 'cccccccccccc', 'U', 'Indonesia', '800/CCC/B/C.1', 'ghalia', 2000),
+(7, 'B0007', '9870-189-192', 'sampul/3836871b580e64c7930aa2299d798319.jpg', 'bbbbbb', 'cccccccccccc', 'U', 'Indonesia', '800/CCC/B/C.2', 'ghalia', 2000),
+(8, 'B0008', '9870-189-192', 'sampul/3836871b580e64c7930aa2299d798319.jpg', 'bbbbbb', 'cccccccccccc', 'U', 'Indonesia', '800/CCC/B/C.3', 'ghalia', 2000);
 
 -- --------------------------------------------------------
 
@@ -146,14 +143,14 @@ CREATE TABLE IF NOT EXISTS `tbl_detail_peminjaman` (
 --
 
 INSERT INTO `tbl_detail_peminjaman` (`id_detail_peminjaman`, `id_anggota`, `id_petugas`, `id_buku`, `tgl_pinjam`, `tgl_kembali`, `tgl_pengembalian`, `banyak_perpanjang`) VALUES
-(1, 1, 1, 1, '2014-11-25', '2015-01-01', '2014-12-26', 0),
-(2, 1, 1, 2, '2014-12-25', '2015-01-01', '0000-00-00', 0),
-(3, 1, 1, 3, '2014-11-25', '2015-01-01', '2014-12-26', 0),
-(4, 2, 1, 3, '2014-12-25', '2015-01-01', '0000-00-00', 0),
-(5, 2, 1, 4, '2014-12-25', '2015-01-01', '0000-00-00', 0),
-(6, 2, 1, 1, '2014-12-25', '2015-01-01', '0000-00-00', 0),
-(7, 3, 1, 1, '2014-12-25', '2015-01-01', '0000-00-00', 0),
-(8, 3, 1, 2, '2014-12-25', '2015-01-01', '0000-00-00', 0);
+(1, 1, 1, 1, '2014-12-29', '2015-01-05', '0000-00-00', 0),
+(2, 1, 1, 3, '2014-12-29', '2015-01-05', '2014-12-29', 0),
+(3, 1, 1, 4, '2014-12-29', '2015-01-05', '0000-00-00', 0),
+(4, 3, 1, 1, '2014-12-29', '2015-01-05', '0000-00-00', 0),
+(5, 4, 1, 3, '2014-12-29', '0000-00-00', '0000-00-00', 0),
+(6, 4, 1, 4, '2014-12-29', '0000-00-00', '0000-00-00', 0),
+(7, 4, 1, 5, '2014-12-29', '0000-00-00', '0000-00-00', 0),
+(8, 3, 1, 7, '2014-12-29', '2015-01-05', '0000-00-00', 0);
 
 -- --------------------------------------------------------
 
@@ -176,19 +173,19 @@ CREATE TABLE IF NOT EXISTS `tbl_file` (
   `id_petugas` int(11) NOT NULL,
   `id_anggota` int(11) NOT NULL,
   PRIMARY KEY (`kode_file`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
 
 --
 -- Dumping data untuk tabel `tbl_file`
 --
 
 INSERT INTO `tbl_file` (`kode_file`, `sampul_file`, `nama_file`, `judul_file`, `pengarang_file`, `macam_file`, `bahasa_file`, `penerbit_file`, `tahun_terbit_file`, `ringkasan`, `tgl_upload`, `id_petugas`, `id_anggota`) VALUES
-(2, 'sampul/813fec1ae86a209ce65bfec2a91d0a99.jpg', 'berkas/07dbd3204b3a92738ad2c53f6f4b7892.docx', 'modul 1 algoritma pemrograman', 'badar said, s.kom', 'R', 'Indonesia', '', 2010, 'algoritma pemrograman. . .', '2014-12-16', 1, 0),
-(3, 'sampul/6cc812c5f6f93109ff4df30a11f8aa5d.jpg', 'berkas/a0da8852d53a2fa13f8c396237e5bd11.docx', 'rekayasa perangkat lunak', 'eka nurhayati, S.kom', 'U', 'Indonesia', '', 2011, 'rpl adalah. . .', '2014-12-16', 1, 0),
-(4, 'sampul/7ace80ee2d736bbfc0510a6c95cca6e8.jpg', 'berkas/fecc302417161ad316f8b274306cedf7.xlsx', 'modul simulasi', 'erwin prasetyowati', 'U', 'Indonesia', '', 2011, 'model simulasi. . .', '2014-12-19', 1, 0),
-(5, 'sampul/1c53ef560b66c93ad92b455a0516a3e0.jpg', 'berkas/f88794eedf3b2855e8fbf07d11662e0e.docx', 'jaringan saraf tiruan', 'anang hermansyah', 'R', 'Inggris', '', 2010, 'jst adalah. . .', '2014-12-19', 1, 0),
-(9, 'sampul/8470bee4bca8d178e6e3d1dc92f62358.jpg', 'berkas/d7cafeedf68e4c212e56156fb28e2fac.docx', 'beton', 'arifin', 'R', 'Indonesia', '', 2014, 'beton. . .', '2014-12-19', 0, 5),
-(14, 'sampul/sampul_file.jpg', 'berkas/488c6f33631388db00fc02130a10b703.docx', 'abcdef', 'ghijkl', 'U', 'Indonesia', 'mnopqrs', 2000, 'tuvwxyz', '2014-12-26', 0, 4);
+(1, 'sampul/9c85c789b8f34d938c9c9d0e13c10a25.jpg', 'berkas/a3b1f00c708d2832741fb327b829b62f.docx', 'Modul alpro II', 'badar said, S.Kom', 'U', 'Indonesia', '', 2011, 'alpro. . .', '2014-12-29', 1, 0),
+(2, 'sampul/a3e4b88a4fdddef28e63220d0e92b250.jpg', 'berkas/d48f3e0e3183540beab64fe1aafb74e2.ppt', 'Konsep RPL', 'Sholeh Rachmatullah', 'U', 'Indonesia', '', 2013, 'konsep RPL. . .', '2014-12-29', 1, 0),
+(3, 'sampul/631a49058180ef1a876d8c2b9a1ac636.jpg', 'berkas/684ea61db701b9442296a83dc7b75f1d.ppt', 'Metode RPL', 'Sholeh Rachmatullah', 'U', 'Indonesia', '', 2013, 'Metode RPL. . .', '2014-12-29', 1, 0),
+(4, 'sampul/50e63754a821b504e14fb8c6dd5aae4a.jpg', 'berkas/a5bcd0e2136cbf6b40da0f99828a49d4.ppt', 'Proses Perancangan RPL', 'Sholeh Rachmatullah', 'U', 'Indonesia', '', 2013, 'Proses Perancangan RPL. . .', '2014-12-29', 1, 0),
+(5, 'sampul/2ffcee84425cf3aa2970c94764748ca1.jpg', 'berkas/9606d887a49d465e4685a0370e227faf.ppt', 'ERD', 'Sholeh Rachmatullah', 'U', 'Indonesia', '', 2013, 'ERD adalah. . .', '2014-12-29', 1, 0),
+(6, 'sampul/c65d8e384afe37af1653e814d361abbf.jpg', 'berkas/e62d212944c98a81ad01904a1a4d16f5.pdf', 'E-Commerce', 'Syahroni', 'U', 'Indonesia', '', 2012, 'E-commerce adalah. . .', '2014-12-29', 1, 0);
 
 -- --------------------------------------------------------
 

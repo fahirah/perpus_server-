@@ -50,7 +50,6 @@ class BerandaModel extends ModelBase {
 					'sampul'=>$d->sampul_buku,
 					'penempatan'=>$d->no_penempatan,
 					'pengarang'=>$d->pengarang_buku,
-					'stok'=>$d->sisa_stok_buku,
 					'macam'=>$d->macam_buku,
 					'bahasa'=>$d->bahasa_buku,
 					'penerbit'=>$d->penerbit_buku,
@@ -94,27 +93,4 @@ class BerandaModel extends ModelBase {
 			'filebaru' =>$s
 		);
 	}
-	/*
-	public function view_detildatabukubaru($kode) {
-		$r=array();
-		$d=$this->db->query("select * from tbl_buku where kode_buku='$kode'",true);
-		
-		if(! $d)  return FALSE;				
-		
-		$r[]=array(
-			'id'=>$d->id_buku,
-			'kode'=>$d->kode_buku,
-			'isbn'=>$d->isbn_buku,
-			'sampul'=>$d->sampul_buku,
-			'judul'=>$d->judul_buku,
-			'pengarang'=>$d->pengarang_buku,
-			'stok'=>$d->stok_buku,
-			'sisa'=>$d->sisa_stok_buku,
-			'macam'=>$d->macam_buku,
-			'bahasa'=>$d->bahasa_buku,
-			'penempatan'=>$d->no_penempatan,
-			'penerbit'=>$d->penerbit_buku,
-			'tahun'=>$d->tahun_terbit_buku
-		);
-	}*/
 }	
