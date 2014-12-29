@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Waktu pembuatan: 20. Desember 2014 jam 00:08
+-- Waktu pembuatan: 29. Desember 2014 jam 04:00
 -- Versi Server: 5.5.16
 -- Versi PHP: 5.3.8
 
@@ -32,20 +32,17 @@ CREATE TABLE IF NOT EXISTS `tbl_aktivitas` (
   `kode_file` int(11) NOT NULL,
   `tgl_download` date NOT NULL,
   PRIMARY KEY (`kode_aktivitas`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 --
 -- Dumping data untuk tabel `tbl_aktivitas`
 --
 
 INSERT INTO `tbl_aktivitas` (`kode_aktivitas`, `id_anggota`, `kode_file`, `tgl_download`) VALUES
-(1, 2, 2, '2014-12-20'),
-(2, 9, 9, '2014-12-20'),
-(3, 2, 2, '2014-12-20'),
-(4, 3, 3, '2014-12-20'),
-(5, 4, 4, '2014-12-20'),
-(6, 5, 5, '2014-12-20'),
-(7, 9, 9, '2014-12-20');
+(1, 5, 5, '2014-12-25'),
+(2, 4, 4, '2014-12-26'),
+(3, 13, 13, '2014-12-27'),
+(4, 5, 5, '2014-12-27');
 
 -- --------------------------------------------------------
 
@@ -71,10 +68,10 @@ CREATE TABLE IF NOT EXISTS `tbl_anggota` (
 --
 
 INSERT INTO `tbl_anggota` (`id_anggota`, `nama_anggota`, `no_identitas`, `alamat_anggota`, `telp_anggota`, `jeniskelamin_anggota`, `status_anggota`, `kode_prodi`, `password_anggota`) VALUES
-(1, 'dani', '1155201878', 'parteker', '0817508901', 'P', 'm', 1, '98b827ef43e156e04c262e24a86dfbee'),
+(1, 'dani cita', '1155201878', 'parteker', '08175089011', 'P', 'm', 1, '827ccb0eea8a706c4c34a16891f84e7b'),
 (2, 'susi', '1155201854', 'palenga''an', '0817501245', 'P', 'm', 1, '220ee574c0b0075ac195b3b052abefe4'),
 (3, 'iis', '1155201870', 'pasean', '081738391', 'P', 'm', 2, '2fb902020ccae5312653ede8e580f373'),
-(4, 'nazir', '00011', 'bluto', '0879504948', 'L', 'd', 1, '85cf77b36c41e3f038dd4883f71bca2f'),
+(4, 'nazir', '00011', 'bluto sumenep', '0879504948', 'L', 'd', 1, '85cf77b36c41e3f038dd4883f71bca2f'),
 (5, 'arifin', '00012', 'pamekasan', '087648392', 'L', 'd', 2, 'c11e93d2f88e9e393d5008f1e313a974');
 
 -- --------------------------------------------------------
@@ -106,11 +103,11 @@ CREATE TABLE IF NOT EXISTS `tbl_buku` (
 
 INSERT INTO `tbl_buku` (`id_buku`, `kode_buku`, `isbn_buku`, `sampul_buku`, `judul_buku`, `pengarang_buku`, `stok_buku`, `sisa_stok_buku`, `macam_buku`, `bahasa_buku`, `no_penempatan`, `penerbit_buku`, `tahun_terbit_buku`) VALUES
 (1, 'B001', '979-518-692-1', 'sampul/83631baa9ad7de2048ea52c2eae97de8.jpg', 'pendidikan agama islam I', 'amiruddin', 8, 6, 'U', 'Indonesia', '270/ami/p/', 'ghalia indonesia', 2002),
-(2, 'B002', '979-518-661-1', 'sampul/a.jpg', 'basis data', 'janner simarmata', 10, 10, 'R', 'Indonesia', '270.70/sim/b/', 'andi', 2010),
-(3, 'B003', '979-518-713-2', 'sampul/a.jpg', 'css3', 'burhanuddin salim', 5, 3, 'U', 'Indonesia', '260.1/bur/c', 'rineka cipta', 2010),
-(4, 'B004', '12345', 'sampul/17a22b0f5adb0c70b7e50ed377ec8534.jpg', 'php dasar', 'imam', 8, 6, 'U', 'Indonesia', '230/ima/p', 'andi', 2011),
+(2, 'B002', '979-518-661-1', 'sampul/e6afbd5b848f27ab25ce8c53412acc17.jpg', 'basis data', 'janner simarmata', 10, 8, 'R', 'Indonesia', '270.70/sim/b/', 'andi', 2010),
+(3, 'B003', '979-518-713-2', 'sampul/e6afbd5b848f27ab25ce8c53412acc17.jpg', 'css3', 'burhanuddin salim', 5, 4, 'U', 'Indonesia', '260.1/bur/c', 'rineka cipta', 2010),
+(4, 'B004', '12345', 'sampul/17a22b0f5adb0c70b7e50ed377ec8534.jpg', 'php dasar', 'imam', 8, 7, 'U', 'Indonesia', '230/ima/p', 'andi', 2011),
 (7, 'B005', '970-09-20-1', 'sampul/sampul_buku.jpg', 'html 5', 'ipin', 5, 5, 'U', 'Indonesia', '290/ipi/h/', 'andi', 2011),
-(8, 'B006', '789-08-801', 'sampul/sampul_buku.jpg', 'jQuery', 'muhammad', 5, 5, 'U', 'Indonesia', '701/muh/j/', 'andi', 2011);
+(8, 'B006', '789-08-801', 'sampul/sampul_buku.jpg', 'jQuery', 'muhammad', 5, 5, 'U', 'Indonesia', '701/muh/j/', 'andi yogya', 2011);
 
 -- --------------------------------------------------------
 
@@ -134,28 +131,29 @@ CREATE TABLE IF NOT EXISTS `tbl_denda` (
 
 CREATE TABLE IF NOT EXISTS `tbl_detail_peminjaman` (
   `id_detail_peminjaman` int(11) NOT NULL AUTO_INCREMENT,
-  `kode_peminjaman` int(11) DEFAULT NULL,
+  `id_anggota` int(11) NOT NULL,
+  `id_petugas` int(11) NOT NULL,
   `id_buku` int(11) DEFAULT NULL,
   `tgl_pinjam` date DEFAULT NULL,
   `tgl_kembali` date DEFAULT NULL,
   `tgl_pengembalian` date DEFAULT NULL,
   `banyak_perpanjang` int(11) NOT NULL,
   PRIMARY KEY (`id_detail_peminjaman`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 --
 -- Dumping data untuk tabel `tbl_detail_peminjaman`
 --
 
-INSERT INTO `tbl_detail_peminjaman` (`id_detail_peminjaman`, `kode_peminjaman`, `id_buku`, `tgl_pinjam`, `tgl_kembali`, `tgl_pengembalian`, `banyak_perpanjang`) VALUES
-(1, 1, 1, '2014-12-17', '2014-12-31', '2014-12-18', 1),
-(4, 2, 3, '2014-12-17', '2014-12-24', '0000-00-00', 0),
-(7, 4, 3, '2014-12-17', '0000-00-00', '0000-00-00', 0),
-(8, 5, 3, '2014-12-17', '0000-00-00', '2014-12-18', 0),
-(9, 6, 1, '2014-12-17', '2014-12-24', '0000-00-00', 0),
-(10, 7, 4, '2014-12-17', '2014-12-24', '0000-00-00', 0),
-(11, 8, 4, '2014-12-17', '0000-00-00', '0000-00-00', 0),
-(12, 9, 2, '2014-12-17', '2014-12-24', '0000-00-00', 0);
+INSERT INTO `tbl_detail_peminjaman` (`id_detail_peminjaman`, `id_anggota`, `id_petugas`, `id_buku`, `tgl_pinjam`, `tgl_kembali`, `tgl_pengembalian`, `banyak_perpanjang`) VALUES
+(1, 1, 1, 1, '2014-11-25', '2015-01-01', '2014-12-26', 0),
+(2, 1, 1, 2, '2014-12-25', '2015-01-01', '0000-00-00', 0),
+(3, 1, 1, 3, '2014-11-25', '2015-01-01', '2014-12-26', 0),
+(4, 2, 1, 3, '2014-12-25', '2015-01-01', '0000-00-00', 0),
+(5, 2, 1, 4, '2014-12-25', '2015-01-01', '0000-00-00', 0),
+(6, 2, 1, 1, '2014-12-25', '2015-01-01', '0000-00-00', 0),
+(7, 3, 1, 1, '2014-12-25', '2015-01-01', '0000-00-00', 0),
+(8, 3, 1, 2, '2014-12-25', '2015-01-01', '0000-00-00', 0);
 
 -- --------------------------------------------------------
 
@@ -165,6 +163,7 @@ INSERT INTO `tbl_detail_peminjaman` (`id_detail_peminjaman`, `kode_peminjaman`, 
 
 CREATE TABLE IF NOT EXISTS `tbl_file` (
   `kode_file` int(11) NOT NULL AUTO_INCREMENT,
+  `sampul_file` varchar(60) NOT NULL,
   `nama_file` varchar(60) NOT NULL,
   `judul_file` varchar(30) NOT NULL,
   `pengarang_file` varchar(30) NOT NULL,
@@ -177,48 +176,19 @@ CREATE TABLE IF NOT EXISTS `tbl_file` (
   `id_petugas` int(11) NOT NULL,
   `id_anggota` int(11) NOT NULL,
   PRIMARY KEY (`kode_file`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
 
 --
 -- Dumping data untuk tabel `tbl_file`
 --
 
-INSERT INTO `tbl_file` (`kode_file`, `nama_file`, `judul_file`, `pengarang_file`, `macam_file`, `bahasa_file`, `penerbit_file`, `tahun_terbit_file`, `ringkasan`, `tgl_upload`, `id_petugas`, `id_anggota`) VALUES
-(2, 'berkas/07dbd3204b3a92738ad2c53f6f4b7892.docx', 'modul 1 algoritma pemrograman', 'badar said, s.kom', 'R', 'Indonesia', '', 2010, 'algoritma pemrograman. . .', '2014-12-16', 1, 0),
-(3, 'berkas/a0da8852d53a2fa13f8c396237e5bd11.docx', 'rekayasa perangkat lunak', 'eka nurhayati, S.kom', 'U', 'Indonesia', '', 2011, 'rpl adalah. . .', '2014-12-16', 1, 0),
-(4, 'berkas/fecc302417161ad316f8b274306cedf7.xlsx', 'modul simulasi', 'erwin prasetyowati', 'U', 'Indonesia', '', 2011, 'model simulasi. . .', '2014-12-19', 1, 0),
-(5, 'berkas/f88794eedf3b2855e8fbf07d11662e0e.docx', 'jaringan saraf tiruan', 'anang hermansyah', 'R', 'Inggris', '', 2010, 'jst adalah. . .', '2014-12-19', 1, 0),
-(6, 'berkas/500aceed7ff2e8241415b626824a8754.xlsx', 'struktur data I', 'nazir arifin', 'U', 'Indonesia', '', 2011, 'struktur data. . .', '2014-12-19', 0, 4),
-(7, 'berkas/', 'analisa desain SI', 'muhammad', 'U', 'Indonesia', '', 2000, 'analisa desain SI. . .', '2014-12-19', 0, 4),
-(9, 'berkas/d7cafeedf68e4c212e56156fb28e2fac.docx', 'beton', 'arifin', 'R', 'Indonesia', '', 2014, 'beton. . .', '2014-12-19', 0, 5);
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `tbl_peminjaman_pengembalian`
---
-
-CREATE TABLE IF NOT EXISTS `tbl_peminjaman_pengembalian` (
-  `kode_peminjaman` int(11) NOT NULL,
-  `id_anggota` int(11) DEFAULT NULL,
-  `id_petugas` int(11) DEFAULT NULL,
-  `status_peminjaman` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`kode_peminjaman`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data untuk tabel `tbl_peminjaman_pengembalian`
---
-
-INSERT INTO `tbl_peminjaman_pengembalian` (`kode_peminjaman`, `id_anggota`, `id_petugas`, `status_peminjaman`) VALUES
-(1, 1, 1, 'kembali'),
-(2, 2, 1, 'pinjam'),
-(4, 4, 1, 'pinjam'),
-(5, 4, 1, 'kembali'),
-(6, 3, 1, 'pinjam'),
-(7, 1, 1, 'pinjam'),
-(8, 4, 1, 'pinjam'),
-(9, 2, 1, 'pinjam');
+INSERT INTO `tbl_file` (`kode_file`, `sampul_file`, `nama_file`, `judul_file`, `pengarang_file`, `macam_file`, `bahasa_file`, `penerbit_file`, `tahun_terbit_file`, `ringkasan`, `tgl_upload`, `id_petugas`, `id_anggota`) VALUES
+(2, 'sampul/813fec1ae86a209ce65bfec2a91d0a99.jpg', 'berkas/07dbd3204b3a92738ad2c53f6f4b7892.docx', 'modul 1 algoritma pemrograman', 'badar said, s.kom', 'R', 'Indonesia', '', 2010, 'algoritma pemrograman. . .', '2014-12-16', 1, 0),
+(3, 'sampul/6cc812c5f6f93109ff4df30a11f8aa5d.jpg', 'berkas/a0da8852d53a2fa13f8c396237e5bd11.docx', 'rekayasa perangkat lunak', 'eka nurhayati, S.kom', 'U', 'Indonesia', '', 2011, 'rpl adalah. . .', '2014-12-16', 1, 0),
+(4, 'sampul/7ace80ee2d736bbfc0510a6c95cca6e8.jpg', 'berkas/fecc302417161ad316f8b274306cedf7.xlsx', 'modul simulasi', 'erwin prasetyowati', 'U', 'Indonesia', '', 2011, 'model simulasi. . .', '2014-12-19', 1, 0),
+(5, 'sampul/1c53ef560b66c93ad92b455a0516a3e0.jpg', 'berkas/f88794eedf3b2855e8fbf07d11662e0e.docx', 'jaringan saraf tiruan', 'anang hermansyah', 'R', 'Inggris', '', 2010, 'jst adalah. . .', '2014-12-19', 1, 0),
+(9, 'sampul/8470bee4bca8d178e6e3d1dc92f62358.jpg', 'berkas/d7cafeedf68e4c212e56156fb28e2fac.docx', 'beton', 'arifin', 'R', 'Indonesia', '', 2014, 'beton. . .', '2014-12-19', 0, 5),
+(14, 'sampul/sampul_file.jpg', 'berkas/488c6f33631388db00fc02130a10b703.docx', 'abcdef', 'ghijkl', 'U', 'Indonesia', 'mnopqrs', 2000, 'tuvwxyz', '2014-12-26', 0, 4);
 
 -- --------------------------------------------------------
 
@@ -255,14 +225,15 @@ CREATE TABLE IF NOT EXISTS `tbl_petugas` (
   `username` varchar(15) NOT NULL,
   `password_petugas` varchar(50) NOT NULL,
   PRIMARY KEY (`id_petugas`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
 
 --
 -- Dumping data untuk tabel `tbl_petugas`
 --
 
 INSERT INTO `tbl_petugas` (`id_petugas`, `nama_petugas`, `jeniskelamin_petugas`, `telp_petugas`, `username`, `password_petugas`) VALUES
-(1, 'fahirah', 'Perempuan', '081931635887', 'admin', '21232f297a57a5a743894a0e4a801fc3');
+(1, 'fahirah', 'P', '081931635887', 'admin', '827ccb0eea8a706c4c34a16891f84e7b'),
+(9, 'ipin', 'L', '0819346171', 'upin', '1098546859b56f5297205943b5a0469e');
 
 -- --------------------------------------------------------
 
@@ -271,10 +242,10 @@ INSERT INTO `tbl_petugas` (`id_petugas`, `nama_petugas`, `jeniskelamin_petugas`,
 --
 
 CREATE TABLE IF NOT EXISTS `tbl_prodi` (
-  `kode_prodi` int(11) NOT NULL,
+  `kode_prodi` int(11) NOT NULL AUTO_INCREMENT,
   `nama_prodi` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`kode_prodi`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data untuk tabel `tbl_prodi`

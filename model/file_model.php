@@ -31,13 +31,13 @@ class FileModel extends ModelBase {
 		$start=$cpagefl*$tdph;
 		$r=array();
 		if(empty($jenis)){
-			$hasil=$this->db->query("SELECT * FROM tbl_file where judul_file like '%{$kata}%' or pengarang_file like '%{$kata}%' or penerbit_file like '%{$kata}%' limit $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_file where judul_file like '%{$kata}%' or pengarang_file like '%{$kata}%' or penerbit_file like '%{$kata}%' order by tgl_upload desc limit $start,$tdph");
 		}else if($jenis=="judul"){
-			$hasil=$this->db->query("SELECT * FROM tbl_file where judul_file like '%{$kata}%' limit $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_file where judul_file like '%{$kata}%' order by tgl_upload desc limit $start,$tdph");
 		}else if($jenis=="pengarang"){
-			$hasil=$this->db->query("SELECT * FROM tbl_file where pengarang_file like '%{$kata}%' limit $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_file where pengarang_file like '%{$kata}%' order by tgl_upload desc limit $start,$tdph");
 		}else if($jenis=="penerbit"){
-			$hasil=$this->db->query("SELECT * FROM tbl_file where penerbit_file like '%{$kata}%' limit $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_file where penerbit_file like '%{$kata}%' limit order by tgl_upload desc $start,$tdph");
 		}
 		
 		if(count($hasil)<=0) return FALSE;
@@ -51,6 +51,7 @@ class FileModel extends ModelBase {
 				$r[]=array(
 					'id'=>$kode,
 					'nama'=>$d->nama_file,
+					'sampul'=>$d->sampul_file,
 					'judul'=>$d->judul_file,
 					'pengarang'=>$d->pengarang_file,
 					'macam'=>$d->macam_file,
@@ -69,20 +70,30 @@ class FileModel extends ModelBase {
 		}
 	}
 	
-	public function view_detildatafile($kode) {
+	private function human_filesize($bytes, $decimals = 2) {
+		$sz = 'BKMGTP';
+		$factor = floor((strlen($bytes) - 1) / 3);
+		return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)).' '. @$sz[$factor];
+	}
+	
+	public function view_detildatafile($kode,$iofiles) {
 		$r=array();
 		$d=$this->db->query("select * from tbl_file where kode_file='$kode'",true);
 		
-		if(! $d)  return FALSE;				
-		
+		if(! $d)  return FALSE;	
+		$nama=$d->nama_file;
+		$attr=$iofiles->get_attrib($nama);		
 		$r[]=array(
 			'id'=>$d->kode_file,
-			'nama'=>$d->nama_file,
+			'nama'=>$nama,
 			'judul'=>$d->judul_file,
+			'sampul'=>$d->sampul_file,
+			'ukuran'=>$this->human_filesize($attr['size']).'B',
+			'tipe'=>$attr['type'],
 			'pengarang'=>$d->pengarang_file,
 			'macam'=>$d->macam_file,
 			'bahasa'=>$d->bahasa_file,
-			'penerbit'=>$d->penerbit_file,
+			'penerbit'=>($d->penerbit_file == '' ? '-' : $d->penerbit_file),
 			'tahun'=>$d->tahun_terbit_file,
 			'ringkasan'=>$d->ringkasan,
 			'tgl'=>date('d-m-Y', strtotime($d->tgl_upload))
@@ -117,6 +128,9 @@ class FileModel extends ModelBase {
 	}
 	
 	public function tambah_file($iofiles){
+		//var_dump($_FILES);
+		//return;
+		
 		extract($this->prepare_post(array('id', 'judul', 'pengarang', 'macam', 'bahasa', 'penerbit', 'tahun', 'ringkasan','status', 'id_user')));
 		$judul=$this->db->escape_str($judul);
 		$pengarang=$this->db->escape_str($pengarang);
@@ -126,15 +140,33 @@ class FileModel extends ModelBase {
 		$ringkasan=$this->db->escape_str($ringkasan);
 		$id = floatval($id);
 		
+		//upload berkas
 		$config['upload_path']   = 'berkas/';
 		$config['allowed_types'] = 'doc|docx|ppt|pptx|pdf|xls|xlsx';
 		$config['encrypt_name']  = TRUE;
 		$config['overwrite']	 = TRUE;
 		$iofiles->upload_config($config);
-		$iofiles->upload('file');
+		$iofiles->upload('file1');
 		
 		$filename = $iofiles->upload_get_param('file_name');
 		$filepath = 'berkas/'.$filename;
+		
+		//upload sampul
+		if (isset($_FILES['file2'])) {
+			$config = array();
+			$config['upload_path']   = 'sampul/';
+			$config['allowed_types'] = 'jpg|jpeg|png|gif';
+			$config['encrypt_name']  = TRUE;
+			$config['overwrite']	 = TRUE;
+			$iofiles->upload_config($config);
+			$iofiles->upload('file2');
+			
+			$filename2 = $iofiles->upload_get_param('file_name');
+			$filepath2= 'sampul/'.$filename2;
+		} else{
+			$filename2 = 'sampul_file.jpg';
+			$filepath2= 'sampul/'.$filename2;
+		}
 		
 		if ($status == 2){
 			// berarti petugas
@@ -148,14 +180,17 @@ class FileModel extends ModelBase {
 		
 		if (empty($id)) {
 			//insert
-			$ins=$this->db->query("INSERT INTO tbl_file VALUES(0,'$filepath','$judul','$pengarang','$macam','$bahasa','$penerbit','$tahun', '$ringkasan', NOW(), '$petugas','$dosen')");
+			$ins=$this->db->query("INSERT INTO tbl_file VALUES(0,'$filepath2', '$filepath','$judul','$pengarang','$macam','$bahasa','$penerbit','$tahun', '$ringkasan', NOW(), '$petugas','$dosen')");
 		} else {
 			// edit
-			$ambil=$this->db->query("select nama_file from tbl_file where kode_file='$id'",true);
-			if(isset($_FILES)){
+			$ambil=$this->db->query("select nama_file, sampul_file from tbl_file where kode_file='$id'",true);
+			if(isset($_FILES['file'])){
 				@unlink($ambil->nama_file);
 				$edit=$this->db->query("update tbl_file set nama_file='$filepath', judul_file='$judul', pengarang_file='$pengarang', macam_file='$macam', bahasa_file='$bahasa', penerbit_file='$penerbit', tahun_terbit_file='$tahun',ringkasan='$ringkasan' where kode_file='$id'");
-			} else {
+			} else if(isset($_FILES['file2'])){
+				@unlink($ambil->sampul_file);
+				$edit=$this->db->query("update tbl_file set sampul_file='$filepath2' where kode_file='$id'");
+			}else {
 				$edit=$this->db->query("update tbl_file set judul_file='$judul', pengarang_file='$pengarang', macam_file='$macam', bahasa_file='$bahasa', penerbit_file='$penerbit', tahun_terbit_file='$tahun',ringkasan='$ringkasan' where kode_file='$id'");
 			}
 		}

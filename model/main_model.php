@@ -24,8 +24,14 @@ class MainModel extends ModelBase {
 		}
 		return $r;
 	}
-
-	public function view_pencarian() {
+	
+	private function human_filesize($bytes, $decimals = 2) {
+		$sz = 'BKMGTP';
+		$factor = floor((strlen($bytes) - 1) / 3);
+		return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)).' '. @$sz[$factor];
+	}
+	
+	public function view_pencarian($iofiles) {
 		extract($this->prepare_get(array('cpagebk','cpagefl','judul','pengarang','penerbit','isbn','tipe')));
 		$judul=$this->db->escape_str($judul);
 		$pengarang=$this->db->escape_str($pengarang);
@@ -34,89 +40,180 @@ class MainModel extends ModelBase {
 		$cpagebk = floatval($cpagebk);
 		$cpagefl = floatval($cpagefl);
 		//total halaman
-		$tdph=20;
-		
-		$where = array();
-		if ( ! empty($judul)) $where[] = "judul_buku like '%{$judul}%'";
-		if ( ! empty($pengarang)) $where[] = "pengarang_buku like '%{$pengarang}%'";
-		if ( ! empty($pengerbit)) $where[] = "penerbit_buku like '%{$penerbit}%'";
-		if ( ! empty($isbn)) $where[] = "isbn_buku like '%{$isbn}%'";
-		
-		$sqlcount = "select count(id_buku) as hasil from tbl_buku";
-		$sql = "SELECT * FROM tbl_buku";
-		
-		if ( ! empty($where)) {
-			$sqlcount .= " WHERE " . implode(' OR ', $where);
-			$sql .= " WHERE " . implode(' OR ', $where);
-		}
-		
-		$totalhalaman=$this->db->query($sqlcount,true);
-		
-		$numpagebk=ceil($totalhalaman->hasil/$tdph);
-		$start=$cpagebk*$tdph;
+		$tdph=10;
 		$r=array();
-		
-		$hasil=$this->db->query($sql . " limit $start,$tdph");
-		
-		if(count($hasil)<=0)  return FALSE;
-		else{
-			for($i=0; $i<count($hasil);$i++){
-				$d=$hasil[$i];
-				
-				$r[]=array(
-					'kode'=>$d->kode_buku,
-					'isbn'=>$d->isbn_buku,
-					'judul'=>$d->judul_buku,
-					'pengarang'=>$d->pengarang_buku,
-					'stok'=>$d->sisa_stok_buku,
-					'macam'=>$d->macam_buku,
-					'bahasa'=>$d->bahasa_buku,
-					'penerbit'=>$d->penerbit_buku,
-					'tahun'=>$d->tahun_terbit_buku
-				);
-			}
-		}
-		
-		$wherefl = array();
-		if ( ! empty($judul)) $wherefl[] = "judul_file like '%{$judul}%'";
-		if ( ! empty($pengarang)) $wherefl[] = "pengarang_file like '%{$pengarang}%'";
-		if ( ! empty($pengerbit)) $wherefl[] = "penerbit_file like '%{$penerbit}%'";
-		
-		$sqlcountfl = "select count(kode_file) as hasil from tbl_file";
-		$sqlfl = "SELECT * FROM tbl_file";
-		
-		if ( ! empty($wherefl)) {
-			$sqlcountfl .= " WHERE " . implode(' OR ', $wherefl);
-			$sqlfl .= " WHERE " . implode(' OR ', $wherefl);
-		}
-	
-		$totalhalamanfl=$this->db->query($sqlcountfl,true);
-		
-		$numpagefl=ceil($totalhalamanfl->hasil/$tdph);
-		$start=$cpagefl*$tdph;
 		$p=array();
+		$numpagefl=0;
+		$numpagebk=0;
 		
-		$hasilfl=$this->db->query($sqlfl . " limit $start,$tdph");
+		if(empty($tipe)){
+			$where = array();
+			if ( ! empty($judul)) $where[] = "judul_buku like '%{$judul}%'";
+			if ( ! empty($pengarang)) $where[] = "pengarang_buku like '%{$pengarang}%'";
+			if ( ! empty($penerbit)) $where[] = "penerbit_buku like '%{$penerbit}%'";
+			if ( ! empty($isbn)) $where[] = "isbn_buku like '%{$isbn}%'";
+			
+			$sqlcount = "select count(id_buku) as hasil from tbl_buku";
+			$sql = "SELECT * FROM tbl_buku";
+			
+			if ( ! empty($where)) {
+				$sqlcount .= " WHERE " . implode(' OR ', $where);
+				$sql .= " WHERE " . implode(' OR ', $where);
+			}
+			
+			$totalhalaman=$this->db->query($sqlcount,true);
+			
+			$numpagebk=ceil($totalhalaman->hasil/$tdph);
+			$startbk=$cpagebk*$tdph;
+					
+			$hasil=$this->db->query($sql . " limit $startbk,$tdph");
+			
+			if(count($hasil)<=0)  return FALSE;
+			else{
+				for($i=0; $i<count($hasil);$i++){
+					$d=$hasil[$i];
+					
+					$r[]=array(
+						'kode'=>$d->kode_buku,
+						'isbn'=>$d->isbn_buku,
+						'judul'=>$d->judul_buku,
+						'sampul'=>$d->sampul_buku,
+						'penempatan'=>$d->no_penempatan,
+						'pengarang'=>$d->pengarang_buku,
+						'stok'=>$d->sisa_stok_buku,
+						'macam'=>$d->macam_buku,
+						'bahasa'=>$d->bahasa_buku,
+						'penerbit'=>$d->penerbit_buku,
+						'tahun'=>$d->tahun_terbit_buku
+					);
+				}
+			}
+			
+			$wherefl = array();
+			if ( ! empty($judul)) $wherefl[] = "judul_file like '%{$judul}%'";
+			if ( ! empty($pengarang)) $wherefl[] = "pengarang_file like '%{$pengarang}%'";
+			if ( ! empty($penerbit)) $wherefl[] = "penerbit_file like '%{$penerbit}%'";
+			
+			$sqlcountfl = "select count(kode_file) as hasil from tbl_file";
+			$sqlfl = "SELECT * FROM tbl_file";
+			
+			if ( ! empty($wherefl)) {
+				$sqlcountfl .= " WHERE " . implode(' OR ', $wherefl);
+				$sqlfl .= " WHERE " . implode(' OR ', $wherefl);
+			}
 		
-		if(count($hasil)<=0)  return FALSE;
-		else{
-			for($i=0; $i<count($hasilfl);$i++){
-				$d=$hasilfl[$i];
-				
-				$p[]=array(
-					'kode'=>$d->kode_file,
-					'judul'=>$d->judul_file,
-					'pengarang'=>$d->pengarang_file,
-					'macam'=>$d->macam_file,
-					'bahasa'=>$d->bahasa_file,
-					'penerbit'=>$d->penerbit_file,
-					'tahun'=>$d->tahun_terbit_file,
-					'tgl'=>date('d-m-Y', strtotime($d->tgl_upload)),
-					'ringkasan'=>$d->ringkasan
-				);
+			$totalhalamanfl=$this->db->query($sqlcountfl,true);
+			
+			$numpagefl=ceil($totalhalamanfl->hasil/$tdph);
+			$startfl=$cpagefl*$tdph;
+					
+			$hasilfl=$this->db->query($sqlfl . " limit $startfl,$tdph");
+			
+			if(count($hasilfl)<=0)  return FALSE;
+			else{
+				for($i=0; $i<count($hasilfl);$i++){
+					$d=$hasilfl[$i];
+					$nama=$d->nama_file;
+					$attr=$iofiles->get_attrib($nama);
+					$p[]=array(
+						'kode'=>$d->kode_file,
+						'judul'=>$d->judul_file,
+						'sampul'=>$d->sampul_file,
+						'ukuran'=>$this->human_filesize($attr['size']).'B',
+						'tipe'=>$attr['type'],
+						'pengarang'=>$d->pengarang_file,
+						'macam'=>$d->macam_file,
+						'bahasa'=>$d->bahasa_file,
+						'penerbit'=>$d->penerbit_file,
+						'tahun'=>$d->tahun_terbit_file,
+						'tgl'=>($d->tgl_upload == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_upload, 'd-F-Y')),
+						'ringkasan'=>$d->ringkasan
+					);
+				}
+			}
+		}else if($tipe=="buku"){
+				$where = array();
+			if ( ! empty($judul)) $where[] = "judul_buku like '%{$judul}%'";
+			if ( ! empty($pengarang)) $where[] = "pengarang_buku like '%{$pengarang}%'";
+			if ( ! empty($penerbit)) $where[] = "penerbit_buku like '%{$penerbit}%'";
+			if ( ! empty($isbn)) $where[] = "isbn_buku like '%{$isbn}%'";
+			
+			$sqlcount = "select count(id_buku) as hasil from tbl_buku";
+			$sql = "SELECT * FROM tbl_buku";
+			
+			if ( ! empty($where)) {
+				$sqlcount .= " WHERE " . implode(' OR ', $where);
+				$sql .= " WHERE " . implode(' OR ', $where);
+			}
+			
+			$totalhalaman=$this->db->query($sqlcount,true);
+			
+			$numpagebk=ceil($totalhalaman->hasil/$tdph);
+			$startbk=$cpagebk*$tdph;
+			$r=array();
+			
+			$hasil=$this->db->query($sql . " limit $startbk,$tdph");
+			
+			if(count($hasil)<=0)  return FALSE;
+			else{
+				for($i=0; $i<count($hasil);$i++){
+					$d=$hasil[$i];
+					
+					$r[]=array(
+						'kode'=>$d->kode_buku,
+						'isbn'=>$d->isbn_buku,
+						'judul'=>$d->judul_buku,
+						'sampul'=>$d->sampul_buku,
+						'pengarang'=>$d->pengarang_buku,
+						'stok'=>$d->sisa_stok_buku,
+						'macam'=>$d->macam_buku,
+						'bahasa'=>$d->bahasa_buku,
+						'penerbit'=>$d->penerbit_buku,
+						'tahun'=>$d->tahun_terbit_buku
+					);
+				}
+			}
+		}else if($tipe=="file"){
+			$wherefl = array();
+			if ( ! empty($judul)) $wherefl[] = "judul_file like '%{$judul}%'";
+			if ( ! empty($pengarang)) $wherefl[] = "pengarang_file like '%{$pengarang}%'";
+			if ( ! empty($penerbit)) $wherefl[] = "penerbit_file like '%{$penerbit}%'";
+			
+			$sqlcountfl = "select count(kode_file) as hasil from tbl_file";
+			$sqlfl = "SELECT * FROM tbl_file";
+			
+			if ( ! empty($wherefl)) {
+				$sqlcountfl .= " WHERE " . implode(' OR ', $wherefl);
+				$sqlfl .= " WHERE " . implode(' OR ', $wherefl);
+			}
+		
+			$totalhalamanfl=$this->db->query($sqlcountfl,true);
+			
+			$numpagefl=ceil($totalhalamanfl->hasil/$tdph);
+			$startfl=$cpagefl*$tdph;
+					
+			$hasilfl=$this->db->query($sqlfl . " limit $startfl,$tdph");
+			
+			if(count($hasilfl)<=0)  return FALSE;
+			else{
+				for($i=0; $i<count($hasilfl);$i++){
+					$d=$hasilfl[$i];
+					
+					$p[]=array(
+						'kode'=>$d->kode_file,
+						'judul'=>$d->judul_file,
+						'pengarang'=>$d->pengarang_file,
+						'macam'=>$d->macam_file,
+						'bahasa'=>$d->bahasa_file,
+						'penerbit'=>$d->penerbit_file,
+						'tahun'=>$d->tahun_terbit_file,
+						'tgl'=>($d->tgl_upload == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_upload, 'd-F-Y')),
+						'ringkasan'=>$d->ringkasan
+					);
+				}
 			}
 		}
-		
+			
 		return array(
 			'buku' => array(
 				'data' => $r,
@@ -168,6 +265,8 @@ class MainModel extends ModelBase {
 				$r[]=array(
 					'kode'=>$d->kode_buku,
 					'judul'=>$d->judul_buku,
+					'isbn'=>$d->isbn_buku,
+					'sampul'=>$d->sampul_buku,
 					'pengarang'=>$d->pengarang_buku,
 					'stok'=>$d->sisa_stok_buku,
 					'macam'=>$d->macam_buku,
@@ -205,13 +304,13 @@ class MainModel extends ModelBase {
 		$start=$cpagefl*$tdph;
 		$r=array();
 		if(empty($jenis)){
-			$hasil=$this->db->query("SELECT * FROM tbl_file where judul_file like '%{$kata}%' or pengarang_file like '%{$kata}%' or penerbit_file like '%{$kata}%' limit $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_file where judul_file like '%{$kata}%' or pengarang_file like '%{$kata}%' or penerbit_file like '%{$kata}%' order by tgl_upload desc limit $start,$tdph");
 		}else if($jenis=="judul"){
-			$hasil=$this->db->query("SELECT * FROM tbl_file where judul_file like '%{$kata}%' limit $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_file where judul_file like '%{$kata}%' order by tgl_upload desc limit $start,$tdph");
 		}else if($jenis=="pengarang"){
-			$hasil=$this->db->query("SELECT * FROM tbl_file where pengarang_file like '%{$kata}%' limit $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_file where pengarang_file like '%{$kata}%' order by tgl_upload desc limit $start,$tdph");
 		}else if($jenis=="penerbit"){
-			$hasil=$this->db->query("SELECT * FROM tbl_file where penerbit_file like '%{$kata}%' limit $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_file where penerbit_file like '%{$kata}%'  limit $start,$tdph");
 		}
 		
 		if(count($hasil)<=0) return FALSE;
@@ -222,6 +321,7 @@ class MainModel extends ModelBase {
 				$r[]=array(
 					'kode'=>$d->kode_file,
 					'judul'=>$d->judul_file,
+					'sampul'=>$d->sampul_file,
 					'pengarang'=>$d->pengarang_file,
 					'macam'=>$d->macam_file,
 					'bahasa'=>$d->bahasa_file,
@@ -277,10 +377,7 @@ class MainModel extends ModelBase {
 		$nama=$ambilfile->nama_file;
 		
 		$input=$this->db->query("insert into tbl_aktivitas values(null, '$id', '$id',now())");
-		
-		
 		$iofiles->download($nama);
-		
 	}
 	
 	public function delete_file($id){
@@ -295,48 +392,76 @@ class MainModel extends ModelBase {
 		$ambilbyr=$this->db->query("select * from tbl_pengaturan",true);
 		$bayar=$ambilbyr->bayar_denda;
 		
-		$ambilkd=$this->db->query("select * from tbl_peminjaman_pengembalian where id_anggota='$id' and status_peminjaman='pinjam'");
-		if(count($ambilkd)<=0) return FALSE;
-		else{
-			for($j=0;$j<count($ambilkd);$j++){
-				$e=$ambilkd[$j];
-				$kodepjm=$e->kode_peminjaman;
-				$hasil=$this->db->query("SELECT * FROM tbl_detail_peminjaman where kode_peminjaman='$kodepjm'");
-				for($i=0; $i<count($hasil);$i++){
-					$d=$hasil[$i];
-					
-					$idbuku=$d->id_buku;
-					$ambilbk=$this->db->query("select kode_buku,judul_buku from tbl_buku where id_buku='$idbuku'",true);
-					$kdbuku=$ambilbk->kode_buku;
-					$judul=$ambilbk->judul_buku;
-					
-					$tglkembali=$d->tgl_kembali;	
-					$tgl_pengembalian=$d->tgl_pengembalian;	
-					$iddetail=$d->id_detail_peminjaman;
-					$ambilhr=$this->db->query("select datediff(now(), '$tglkembali') as jumlah from tbl_detail_peminjaman where id_detail_peminjaman='$id'",true);
-					$jum_hari=$ambilhr->jumlah;
-					if($tgl_pengembalian=='0000-00-00'){
-						if($jum_hari>=0){
-							$denda="Rp. ".($jum_hari*$bayar).",00";				
-						}else{
-							$denda="Rp. 0,00";
-						}					
+		$hasil=$this->db->query("SELECT * FROM tbl_detail_peminjaman where id_anggota='$id' and tgl_pengembalian='0000-00-00'");
+		for($i=0; $i<count($hasil);$i++){
+			$d=$hasil[$i];
+				
+				$idbuku=$d->id_buku;
+				$ambilbk=$this->db->query("select kode_buku,judul_buku from tbl_buku where id_buku='$idbuku'",true);
+				$kdbuku=$ambilbk->kode_buku;
+				$judul=$ambilbk->judul_buku;
+				
+				$tglkembali=$d->tgl_kembali;	
+				$tgl_pengembalian=$d->tgl_pengembalian;	
+				$iddetail=$d->id_detail_peminjaman;
+				$ambilhr=$this->db->query("select datediff(now(), '$tglkembali') as jumlah from tbl_detail_peminjaman where id_detail_peminjaman='$id'",true);
+				$jum_hari=$ambilhr->jumlah;
+				if($tgl_pengembalian=='0000-00-00'){
+					if($jum_hari>=0){
+						$denda="Rp. ".($jum_hari*$bayar).",00";				
 					}else{
-						$denda='-';
-					}
-			
-					$r[]=array(
-						'idbuku'=>$kdbuku,
-						'judul'=>$judul,
-						'tgl_pinjam'=>datedb_to_tanggal($d->tgl_pinjam, 'd-F-Y'),
-						'tgl_kembali'=>datedb_to_tanggal($d->tgl_kembali, 'd-F-Y'),
-						'denda'=>$denda
-					);
+						$denda="Rp. 0,00";
+					}					
+				}else{
+					$denda='-';
 				}
-				return $r;
-			}
+			$r[]=array(
+				'idbuku'=>$kdbuku,
+				'judul'=>$judul,
+				'tgl_pinjam'=>datedb_to_tanggal($d->tgl_pinjam, 'd-F-Y'),
+				'tgl_kembali'=>datedb_to_tanggal($d->tgl_kembali, 'd-F-Y'),
+				'denda'=>$denda
+			);
 		}
+		return $r;
 	}
-
+	
+	
+	public function view_pengaturananggota() {
+		extract($this->prepare_get(array('id')));
+		$r=array();
+	
+		$ambilpt=$this->db->query("select * from tbl_anggota where id_anggota='$id'",true);
+			
+		$r=array(
+			'id'=>$ambilpt->id_anggota,
+			'nama'=>$ambilpt->nama_anggota,
+			'noid'=>$ambilpt->no_identitas,
+			'jk'=>$ambilpt->jeniskelamin_anggota,
+			'gender'=>($ambilpt->jeniskelamin_anggota == 'P' ? 'Perempuan' : 'Laki-laki'),
+			'telp'=>$ambilpt->telp_anggota,
+			'alamat'=>$ambilpt->alamat_anggota
+		);	
+		
+		return array(
+			'datapt'=>$r
+			
+		);
+	}
+	
+	public function ubah_pengaturanakun(){
+		extract($this->prepare_post(array('id','nama','jk','telp','alamat','pw')));
+		$id = floatval($id);
+		$nama=$this->db->escape_str($nama);
+		$jk=$this->db->escape_str($jk);
+		//edit
+		$edit=$this->db->query("update tbl_anggota set nama_anggota='$nama', jeniskelamin_anggota='$jk', telp_anggota='$telp', alamat_anggota='$alamat' where id_anggota='$id'");
+		
+		if(!empty($pw)){
+			$pw=md5($pw);
+			$edit2=$this->db->query("update tbl_anggota set password_anggota='$pw' where id_anggota='$id'");
+		}
+		return $this->view_pengaturananggota();
+	}
+		
 }
-

@@ -55,7 +55,7 @@ class AnggotaModel extends ModelBase {
 					'alamat'=>$d->alamat_anggota,
 					'telp'=>$d->telp_anggota,
 					'jk'=> ($d->jeniskelamin_anggota == 'P' ? 'Perempuan' : 'Laki-laki'),
-					'gender' => $d->jeniskelamin_anggota,
+					'gender'=> $d->jeniskelamin_anggota,
 					'level'=>($d->status_anggota == 'm' ? 'Mahasiswa' : 'Dosen'),
 					'status'=> $d->status_anggota,
 					'prodi'=>$kd,

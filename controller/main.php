@@ -18,7 +18,11 @@ $app->get('/', function() use ($app) {
 $app->options('/pencarian', function() use($app) { $app->status(200); $app->stop(); });
 $app->get('/pencarian', function() use ($app,$ctr) {
 	$ctr->load('model','main');
-	$r=$ctr->MainModel->view_pencarian();
+	$ctr->load('helper', 'date');
+	$ctr->load('file', 'lib/IOFiles.php');
+	$iofiles = new IOFiles();
+	
+	$r=$ctr->MainModel->view_pencarian($iofiles);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
@@ -88,7 +92,11 @@ $app->get('/user/buku', function() use ($app,$ctr) {
 $app->options('/user/file', function() use($app) { $app->status(200); $app->stop(); });
 $app->get('/user/file', function() use ($app,$ctr) {
 	$ctr->load('model','main');
-	$r=$ctr->MainModel->view_file();
+	$ctr->load('helper', 'date');
+	$ctr->load('file', 'lib/IOFiles.php');
+	$iofiles = new IOFiles();
+	
+	$r=$ctr->MainModel->view_file($iofiles);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
@@ -151,6 +159,24 @@ $app->get('/user/peminjaman/:id', function($id) use ($app,$ctr) {
 	json_output($app, $r);
 });
 
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: beranda
+ */
+$app->options('/admin/beranda', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/admin/beranda', function() use ($app,$ctr) {
+	$ctr->load('model','beranda');
+	$ctr->load('helper', 'date');
+	$ctr->load('file', 'lib/IOFiles.php');
+	$iofiles = new IOFiles();
+	
+	$r=$ctr->BerandaModel->view_beranda($iofiles);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
 
 // ----------------------------------------------------------------
 /**
@@ -241,8 +267,9 @@ $app->post('/admin/anggota/:id', function($id) use ($app,$ctr) {
  */
 $app->post('/admin/buku', function() use ($app,$ctr) {
 	$ctr->load('model','buku');
-	$ctr->load('buku', 'lib/IOFiles.php');
+	$ctr->load('file', 'lib/IOFiles.php');
 	$iofiles = new IOFiles();
+	$ctr->load('file', 'lib/barcode.php');
 	
 	$r=$ctr->BukuModel->tambah_buku($iofiles);
 	json_output($app, $r);
@@ -313,6 +340,7 @@ $app->delete('/admin/file/:id', function($id) use ($app,$ctr) {
 $app->options('/admin/peminjaman', function() use($app) { $app->status(200); $app->stop(); });
 $app->get('/admin/peminjaman', function() use ($app,$ctr) {
 	$ctr->load('model','peminjaman');
+	$ctr->load('helper', 'date');
 	$r=$ctr->PeminjamanModel->view_peminjaman();
 	if($r===FALSE)
 		return halt401($app);
@@ -365,13 +393,45 @@ $app->get('/detailbuku/:kode', function($kode) use ($app,$ctr) {
 // ----------------------------------------------------------------
 /**
  * Method: GET
- * Verb: detailbuku
+ * Verb: detailfile
  */
 $app->options('/detailfile/:kode', function() use($app) { $app->status(200); $app->stop(); });
 $app->get('/detailfile/:kode', function($kode) use ($app,$ctr) {
 	$ctr->load('model','file');
 	$ctr->load('helper', 'date');
-	$r=$ctr->FileModel->view_detildatafile($kode);
+	$ctr->load('file', 'lib/IOFiles.php');
+	$iofiles = new IOFiles();
+	$r=$ctr->FileModel->view_detildatafile($kode,$iofiles);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: detailbukubaru
+ */
+$app->options('/detailbukubaru/:kode', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/detailbukubaru/:kode', function($kode) use ($app,$ctr) {
+	$ctr->load('model','beranda');
+	$ctr->load('helper', 'date');
+	$r=$ctr->BerandaModel->view_detildatabukubaru($kode);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: detailfilebaru
+ */
+$app->options('/detailfilebaru/:kode', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/detailfilbarue/:kode', function($kode) use ($app,$ctr) {
+	$ctr->load('model','beranda');
+	$ctr->load('helper', 'date');
+	$r=$ctr->BerandaModel->view_detildatafilebaru($kode);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
@@ -423,11 +483,11 @@ $app->get('/perpanjangpjm/:kodepjm/:kodebk', function($kodepjm, $kodebk) use ($a
  * Method: GET
  * Verb: kembali peminjaman
  */
-$app->options('/kembalipjm/:kodepjm/:kodebk', function() use($app) { $app->status(200); $app->stop(); });
-$app->get('/kembalipjm/:kodepjm/:kodebk', function($kodepjm, $kodebk) use ($app,$ctr) {
+$app->options('/kembalipjm/:idang/:kodebk', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/kembalipjm/:idang/:kodebk', function($idang, $kodebk) use ($app,$ctr) {
 	$ctr->load('model','peminjaman');
 	$ctr->load('helper', 'date');
-	$r=$ctr->PeminjamanModel->kembali_pjm($kodepjm, $kodebk);
+	$r=$ctr->PeminjamanModel->kembali_pjm($idang, $kodebk);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
@@ -471,6 +531,111 @@ $app->options('/admin/pengaturan', function() use($app) { $app->status(200); $ap
 $app->post('/admin/pengaturan', function() use ($app,$ctr) {
 	$ctr->load('model','pengaturan');
 	$r=$ctr->PengaturanModel->ubah_pengaturan();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: POST
+ * Verb:pengaturanprodi
+ */
+$app->post('/admin/pengaturanprodi', function() use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->tambah_prodi();
+	json_output($app, $r);
+});
+
+
+// ----------------------------------------------------------------
+/**
+ * Method: DELETE
+ * Verb: pengaturanprodi
+ */
+$app->options('/admin/pengaturanprodi/:kd', function() use($app) { $app->status(200); $app->stop(); });
+$app->delete('/admin/pengaturanprodi/:kd', function($kd) use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->delete_prodi($kd);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: POST
+ * Verb: pengaturanakun
+ */
+$app->options('/admin/pengaturanakun', function() use($app) { $app->status(200); $app->stop(); });
+$app->post('/admin/pengaturanakun', function() use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->ubah_pengaturanakun();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: POST
+ * Verb:petugas
+ */
+$app->post('/admin/petugas', function() use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->tambah_petugas();
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: DELETE
+ * Verb: petugas
+ */
+$app->options('/admin/petugas/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->delete('/admin/petugas/:kd', function($kd) use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->delete_petugas($kd);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: pengaturan anggota
+ */
+$app->options('/user/pengaturan', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/user/pengaturan', function() use ($app,$ctr) {
+	$ctr->load('model','main');
+	$r=$ctr->MainModel->view_pengaturananggota();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: cetak kartu buku
+ */
+$app->options('/cetak/buku/:kode', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/cetak/buku/:kode', function($kode) use ($app,$ctr) {
+	$ctr->load('model','cetak');
+	$ctr->CetakModel->cetak_kartubuku($kode);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: POST
+ * Verb: pengaturanakun anggota
+ */
+$app->options('/user/pengaturan', function() use($app) { $app->status(200); $app->stop(); });
+$app->post('/user/pengaturan', function() use ($app,$ctr) {
+	$ctr->load('model','main');
+	$r=$ctr->MainModel->ubah_pengaturanakun();
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);

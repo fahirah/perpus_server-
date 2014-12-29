@@ -79,7 +79,7 @@ class BukuModel extends ModelBase {
 		}
 	}
 
-	public function view_detildatabuku($kode) {
+	public function view_detildatabuku($kode) {	
 		$r=array();
 		$d=$this->db->query("select * from tbl_buku where kode_buku='$kode'",true);
 		
@@ -100,37 +100,33 @@ class BukuModel extends ModelBase {
 			'penerbit'=>$d->penerbit_buku,
 			'tahun'=>$d->tahun_terbit_buku
 		);
-		
-		$p=array();
+	
 		$ambilid=$this->db->query("select id_buku from tbl_buku where kode_buku='$kode'",true);
 		$idbk=$ambilid->id_buku;
 		
-		$ambilpjm=$this->db->query("select * from tbl_peminjaman_pengembalian where status_peminjaman='pinjam'");
+		$p=array();
+			
+		$ambilpjm=$this->db->query("select * from tbl_detail_peminjaman where id_buku='$idbk' and tgl_pengembalian='0000-00-00'");
 		for($i=0; $i<count($ambilpjm);$i++){
 			$d=$ambilpjm[$i];
 				
-			$kdpjm=$d->kode_peminjaman;
 			$idan=$d->id_anggota;
 			$ambilnm=$this->db->query("select no_identitas, nama_anggota, status_anggota from tbl_anggota where id_anggota='$idan'",true);
 			$noid=$ambilnm->no_identitas;
 			$nama=$ambilnm->nama_anggota;
 			$status=($ambilnm->status_anggota == 'm' ? 'Mahasiswa' : 'Dosen');
-			$ambilbk=$this->db->query("select * from tbl_detail_peminjaman where kode_peminjaman='$kdpjm' and id_buku='$idbk'");
-			if(count($ambilbk)>0){
-				for($j=0;$j<count($ambilbk);$j++){
-					$e=$ambilbk[$j];
-					$p[]=array(
-						'kdpjm'=>$e->kode_peminjaman,
-						'idan'=>$idan,
-						'noid'=>$noid,
-						'nama'=>$nama,
-						'status'=>$status,
-						'tgl_pinjam'=>datedb_to_tanggal($e->tgl_pinjam, 'd-F-Y'),
-						'tgl_kembali'=>($e->tgl_kembali == '0000-00-00' ? '-' : datedb_to_tanggal($e->tgl_kembali, 'd-F-Y')),
-					);
-				}
-			}
+		
+			$p[]=array(
+				'idan'=>$idan,
+				'noid'=>$noid,
+				'nama'=>$nama,
+				'status'=>$status,
+				'tgl_pinjam'=>datedb_to_tanggal($d->tgl_pinjam, 'd-F-Y'),
+				'tgl_kembali'=>($d->tgl_kembali == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_kembali, 'd-F-Y'))
+				//'status'=>($d->tgl_pengembalian == '0000-00-00' ? 'pinjam' : 'kembali'),
+			);
 		}
+
 		return array(
 			'data' =>$r,
 			'datapjm'=>$p
@@ -155,17 +151,26 @@ class BukuModel extends ModelBase {
 		
 		$filename = $iofiles->upload_get_param('file_name');
 		$filepath = 'sampul/'.$filename;
-	
+		
+		$a=explode(",", $pengarang);
+		$b=explode(" ",$a[0]);
+		$c=(count($b))-1;		
+		$d=substr($b[$c],0,3);
+		
+		$e=substr($judul,0,1);
+		$nopnmptn=$penempatan."/".$d."/".$e;
 		if (empty($id)) {
 			//insert
 			$cek=$this->db->query("SELECT * FROM tbl_buku where kode_buku='$kode'");
 			if(count($cek)>0)  return FALSE;
 			else{
 				if($filename != null){
-					$ins=$this->db->query("INSERT INTO tbl_buku VALUES(0,'$kode','$isbn','$filepath','$judul','$pengarang','$stok','$stok','$macam','$bahasa','$penempatan','$penerbit','$tahun')");
+					$ins=$this->db->query("INSERT INTO tbl_buku VALUES(0,'$kode','$isbn','$filepath','$judul','$pengarang','$stok','$stok','$macam','$bahasa','$nopnmptn','$penerbit','$tahun')");
 				}else{
-					$ins=$this->db->query("INSERT INTO tbl_buku VALUES(0,'$kode','$isbn','sampul/sampul_buku.jpg','$judul','$pengarang','$stok','$stok','$macam','$bahasa','$penempatan','$penerbit','$tahun')");
+					$ins=$this->db->query("INSERT INTO tbl_buku VALUES(0,'$kode','$isbn','sampul/sampul_buku.jpg','$judul','$pengarang','$stok','$stok','$macam','$bahasa','$nopnmptn','$penerbit','$tahun')");
 				}
+				// panggil
+				generate_barcode($kode);
 			}
 		} else {
 			// edit
@@ -182,6 +187,11 @@ class BukuModel extends ModelBase {
 	
 	public function delete_buku($id){
 		$id = floatval($id);
+		$ambil=$this->db->query("select sampul_buku from tbl_buku where id_buku='$id'",true);
+		$sampul=$ambil->sampul_buku;
+		if($sampul!="sampul/sampul_buku.jpg"){
+			@unlink($sampul);
+		}
 		$this->db->query("delete from tbl_buku where id_buku='$id'");
 	}
 
