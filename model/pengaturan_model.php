@@ -38,7 +38,7 @@ class PengaturanModel extends ModelBase {
 			$ambilpt=$this->db->query("select * from tbl_petugas where id_petugas='$id'",true);
 			
 			$q=array(
-				'idp'=>$ambilpt->id_petugas,
+				'id'=>$ambilpt->id_petugas,
 				'nama'=>$ambilpt->nama_petugas,
 				'un'=>$ambilpt->username,
 				'jk'=>$ambilpt->jeniskelamin_petugas,
@@ -47,7 +47,7 @@ class PengaturanModel extends ModelBase {
 			);
 				
 		}
-		$ambiladmin=$this->db->query("select * from tbl_petugas");
+		$ambiladmin=$this->db->query("select * from tbl_petugas where id_petugas!='$id'");
 		if(count($ambiladmin)>0){
 			for($i=0;$i<count($ambiladmin);$i++){
 				$f=$ambiladmin[$i];
@@ -141,5 +141,12 @@ class PengaturanModel extends ModelBase {
 		$id = floatval($kd);
 		$this->db->query("delete from tbl_petugas where id_petugas='$id'");
 		return $this->view_pengaturan();
+	}
+	
+	public function reset_password($id){
+		$id = floatval($id);
+		$ambilno=$this->db->query("select username from tbl_petugas where id_petugas='$id'",true);
+		$no=md5($ambilno->username);
+		$this->db->query("update tbl_petugas set password_petugas='$no' where id_petugas='$id'");
 	}
 }

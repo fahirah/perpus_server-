@@ -48,6 +48,19 @@ class FileModel extends ModelBase {
 				$kode=$d->kode_file;
 				$ambiljml=$this->db->query("select count(kode_file) as jumlah from tbl_aktivitas where kode_file='$kode'",true);
 				$jumlah=$ambiljml->jumlah;
+				$idpt=$d->id_petugas;
+				$idan=$d->id_anggota;
+				
+				if($idpt==0){
+					$ambilnm=$this->db->query("select nama_anggota from tbl_anggota where id_anggota='$idan'",true);
+					$nama=$ambilnm->nama_anggota;
+				}else{
+					$ambilnm=$this->db->query("select nama_petugas from tbl_petugas where id_petugas='$idpt'",true);
+					$nama=$ambilnm->nama_petugas;
+				}
+				$idupload=($d->id_petugas != '0' ? $d->id_petugas : $d->id_anggota);
+				$status=($d->id_petugas != '0' ? 'Petugas' : 'Dosen');
+				
 				$r[]=array(
 					'id'=>$kode,
 					'nama'=>$d->nama_file,
@@ -59,6 +72,9 @@ class FileModel extends ModelBase {
 					'penerbit'=>$d->penerbit_file,
 					'tahun'=>$d->tahun_terbit_file,
 					'jumlah'=>$jumlah,
+					'idu'=>$idupload,
+					'nmu'=>$nama,
+					'status'=>$status,
 					'ringkasan'=>$d->ringkasan,
 					'tgl'=>date('d-m-Y', strtotime($d->tgl_upload))
 				);
@@ -82,7 +98,18 @@ class FileModel extends ModelBase {
 		
 		if(! $d)  return FALSE;	
 		$nama=$d->nama_file;
-		$attr=$iofiles->get_attrib($nama);		
+		$attr=$iofiles->get_attrib($nama);	
+		$idpt=$d->id_petugas;
+		$idan=$d->id_anggota;
+		if($idpt==0){
+			$ambilnm=$this->db->query("select nama_anggota from tbl_anggota where id_anggota='$idan'",true);
+			$namaup=$ambilnm->nama_anggota;
+		}else{
+			$ambilnm=$this->db->query("select nama_petugas from tbl_petugas where id_petugas='$idpt'",true);
+			$namaup=$ambilnm->nama_petugas;
+		}
+		$idupload=($d->id_petugas != '0' ? $d->id_petugas : $d->id_anggota);
+		$status=($d->id_petugas != '0' ? 'Petugas' : 'Dosen');		
 		$r[]=array(
 			'id'=>$d->kode_file,
 			'nama'=>$nama,
@@ -91,6 +118,9 @@ class FileModel extends ModelBase {
 			'ukuran'=>$this->human_filesize($attr['size']).'B',
 			'tipe'=>$attr['type'],
 			'pengarang'=>$d->pengarang_file,
+			'idu'=>$idupload,
+			'nmu'=>$namaup,
+			'status'=>$status,
 			'macam'=>$d->macam_file,
 			'bahasa'=>$d->bahasa_file,
 			'penerbit'=>($d->penerbit_file == '' ? '-' : $d->penerbit_file),
@@ -201,8 +231,13 @@ class FileModel extends ModelBase {
 	
 	public function delete_file($id){
 		$id = floatval($id);
-		$ambil=$this->db->query("select nama_file from tbl_file where kode_file='$id'",true);
+		$ambil=$this->db->query("select nama_file, sampul_file from tbl_file where kode_file='$id'",true);
 		@unlink($ambil->nama_file);
+		$sampul=$ambil->sampul_file;
+		
+		if($sampul!="sampul/sampul_file.jpg"){
+			@unlink($sampul);
+		}
 		$this->db->query("delete from tbl_file where kode_file='$id'");
 	}
 }

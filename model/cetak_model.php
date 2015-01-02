@@ -60,6 +60,7 @@ $(window).load(function(){
 		$noid=$d->no_identitas;
 		$almt=$d->alamat_anggota;
 		$telp=$d->telp_anggota;
+		$status=($d->status_anggota == 'm' ? 'Mahasiswa' : 'Dosen');
 	
 ?>
 	<script src="/lib/jquery-1.10.2.min.js"></script>
@@ -88,6 +89,9 @@ $(window).load(function(){
 		</tr>
 		<tr style=" border-left: .8mm solid #000; border-right: .8mm solid #000;">
 			<td>No Identitas </td><td>:</td><td><?php echo $noid; ?></td>
+		</tr>
+		<tr style=" border-left: .8mm solid #000; border-right: .8mm solid #000;">
+			<td>Status </td><td>:</td><td><?php echo $status; ?></td>
 		</tr>
 		<tr style=" border-left: .8mm solid #000; border-right: .8mm solid #000;">
 			<td>Alamat </td><td>:</td><td><?php echo $almt; ?></td>

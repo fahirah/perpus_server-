@@ -163,7 +163,7 @@ $app->get('/user/peminjaman/:id', function($id) use ($app,$ctr) {
 // ----------------------------------------------------------------
 /**
  * Method: GET
- * Verb: beranda
+ * Verb: beranda petugas
  */
 $app->options('/admin/beranda', function() use($app) { $app->status(200); $app->stop(); });
 $app->get('/admin/beranda', function() use ($app,$ctr) {
@@ -173,6 +173,24 @@ $app->get('/admin/beranda', function() use ($app,$ctr) {
 	$iofiles = new IOFiles();
 	
 	$r=$ctr->BerandaModel->view_beranda($iofiles);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: beranda anggota
+ */
+$app->options('/user/beranda', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/user/beranda', function() use ($app,$ctr) {
+	$ctr->load('model','main');
+	$ctr->load('helper', 'date');
+	$ctr->load('file', 'lib/IOFiles.php');
+	$iofiles = new IOFiles();
+	
+	$r=$ctr->MainModel->view_berandaanggota($iofiles);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
@@ -362,12 +380,41 @@ $app->get('/admin/peminjaman', function() use ($app,$ctr) {
 // ----------------------------------------------------------------
 /**
  * Method: GET
+ * Verb: peminjaman/kas
+ */
+$app->options('/admin/peminjaman/kas', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/admin/peminjaman/kas', function() use ($app,$ctr) {
+	$ctr->load('model','peminjaman');
+	$ctr->load('helper', 'date');
+	$r=$ctr->PeminjamanModel->view_kas();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
  * Verb: cekanggota
  */
 $app->options('/cekanggota/:id', function() use($app) { $app->status(200); $app->stop(); });
 $app->get('/cekanggota/:id', function($id) use ($app,$ctr) {
 	$ctr->load('model','peminjaman');
 	$r=$ctr->PeminjamanModel->cek_anggota($id);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: cekjumlah
+ */
+$app->options('/cekjumlah/:idan/:banyak', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/cekjumlah/:idan/:banyak', function($idan,$banyak) use ($app,$ctr) {
+	$ctr->load('model','peminjaman');
+	$r=$ctr->PeminjamanModel->cek_jumlah($idan,$banyak);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
@@ -478,6 +525,22 @@ $app->get('/detailpjm/:kode', function($kode) use ($app,$ctr) {
 // ----------------------------------------------------------------
 /**
  * Method: GET
+ * Verb: bayar denda
+ 
+$app->options('/bayardenda/:kodepjm/:kodebk', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/bayardenda/:kodepjm/:kodebk', function($kodepjm, $kodebk) use ($app,$ctr) {
+	$ctr->load('model','peminjaman');
+	$ctr->load('helper', 'date');
+	$r=$ctr->PeminjamanModel->bayar_denda($kodepjm, $kodebk);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+*/
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
  * Verb: perpanjang peminjaman
  */
 $app->options('/perpanjangpjm/:kodepjm/:kodebk', function() use($app) { $app->status(200); $app->stop(); });
@@ -495,11 +558,11 @@ $app->get('/perpanjangpjm/:kodepjm/:kodebk', function($kodepjm, $kodebk) use ($a
  * Method: GET
  * Verb: kembali peminjaman
  */
-$app->options('/kembalipjm/:idang/:kodebk', function() use($app) { $app->status(200); $app->stop(); });
-$app->get('/kembalipjm/:idang/:kodebk', function($idang, $kodebk) use ($app,$ctr) {
+$app->options('/kembalipjm/:kodepjm/:kodebk', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/kembalipjm/:kodepjm/:kodebk', function($kodepjm, $kodebk) use ($app,$ctr) {
 	$ctr->load('model','peminjaman');
 	$ctr->load('helper', 'date');
-	$r=$ctr->PeminjamanModel->kembali_pjm($idang, $kodebk);
+	$r=$ctr->PeminjamanModel->kembali_pjm($kodepjm, $kodebk);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
@@ -608,6 +671,20 @@ $app->options('/admin/petugas/:id', function() use($app) { $app->status(200); $a
 $app->delete('/admin/petugas/:kd', function($kd) use ($app,$ctr) {
 	$ctr->load('model','pengaturan');
 	$r=$ctr->PengaturanModel->delete_petugas($kd);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: POST
+ * Verb: reset password petugas
+ */
+$app->options('/admin/pengaturan/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->post('/admin/pengaturan/:id', function($id) use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->reset_password($id);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);

@@ -142,7 +142,9 @@ class BukuModel extends ModelBase {
 		$penerbit=$this->db->escape_str($penerbit);
 		$id = floatval($id);
 		$stok = floatval($stok);
-		
+		if($stok==0){
+			$stok=1;
+		}
 		$config['upload_path']   = 'sampul/';
 		$config['allowed_types'] = 'jpg|jpeg|png';
 		$config['encrypt_name']  = TRUE;

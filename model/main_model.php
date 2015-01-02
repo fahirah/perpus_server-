@@ -80,7 +80,6 @@ class MainModel extends ModelBase {
 						'sampul'=>$d->sampul_buku,
 						'penempatan'=>$d->no_penempatan,
 						'pengarang'=>$d->pengarang_buku,
-						'stok'=>$d->sisa_stok_buku,
 						'macam'=>$d->macam_buku,
 						'bahasa'=>$d->bahasa_buku,
 						'penerbit'=>$d->penerbit_buku,
@@ -165,7 +164,6 @@ class MainModel extends ModelBase {
 						'judul'=>$d->judul_buku,
 						'sampul'=>$d->sampul_buku,
 						'pengarang'=>$d->pengarang_buku,
-						'stok'=>$d->sisa_stok_buku,
 						'macam'=>$d->macam_buku,
 						'bahasa'=>$d->bahasa_buku,
 						'penerbit'=>$d->penerbit_buku,
@@ -268,7 +266,6 @@ class MainModel extends ModelBase {
 					'isbn'=>$d->isbn_buku,
 					'sampul'=>$d->sampul_buku,
 					'pengarang'=>$d->pengarang_buku,
-					'stok'=>$d->sisa_stok_buku,
 					'macam'=>$d->macam_buku,
 					'bahasa'=>$d->bahasa_buku,
 					'penerbit'=>$d->penerbit_buku,
@@ -319,7 +316,7 @@ class MainModel extends ModelBase {
 				$d=$hasil[$i];
 			
 				$r[]=array(
-					'kode'=>$d->kode_file,
+					'id'=>$d->kode_file,
 					'judul'=>$d->judul_file,
 					'sampul'=>$d->sampul_file,
 					'pengarang'=>$d->pengarang_file,
@@ -376,14 +373,19 @@ class MainModel extends ModelBase {
 		$ambilfile=$this->db->query("select nama_file from tbl_file where kode_file='$id'",true);
 		$nama=$ambilfile->nama_file;
 		
-		$input=$this->db->query("insert into tbl_aktivitas values(null, '$id', '$id',now())");
+		$input=$this->db->query("insert into tbl_aktivitas values(null, '$user', '$id',now())");
 		$iofiles->download($nama);
 	}
 	
 	public function delete_file($id){
 		$id = floatval($id);
-		$ambil=$this->db->query("select nama_file from tbl_file where kode_file='$id'",true);
+		$ambil=$this->db->query("select nama_file,sampul_file from tbl_file where kode_file='$id'",true);
 		@unlink($ambil->nama_file);
+		$sampul=$ambil->sampul_file;
+		
+		if($sampul!="sampul/sampul_file.jpg"){
+			@unlink($sampul);
+		}
 		$this->db->query("delete from tbl_file where kode_file='$id'");
 	}
 	
@@ -392,7 +394,7 @@ class MainModel extends ModelBase {
 		$ambilbyr=$this->db->query("select * from tbl_pengaturan",true);
 		$bayar=$ambilbyr->bayar_denda;
 		
-		$hasil=$this->db->query("SELECT * FROM tbl_detail_peminjaman where id_anggota='$id' and tgl_pengembalian='0000-00-00'");
+		$hasil=$this->db->query("select * from tbl_detail_peminjaman where id_anggota='$id' and tgl_pengembalian='0000-00-00'");
 		for($i=0; $i<count($hasil);$i++){
 			$d=$hasil[$i];
 				
@@ -400,11 +402,11 @@ class MainModel extends ModelBase {
 				$ambilbk=$this->db->query("select kode_buku,judul_buku from tbl_buku where id_buku='$idbuku'",true);
 				$kdbuku=$ambilbk->kode_buku;
 				$judul=$ambilbk->judul_buku;
-				
+				$iddet=$d->id_detail_peminjaman;
 				$tglkembali=$d->tgl_kembali;	
 				$tgl_pengembalian=$d->tgl_pengembalian;	
 				$iddetail=$d->id_detail_peminjaman;
-				$ambilhr=$this->db->query("select datediff(now(), '$tglkembali') as jumlah from tbl_detail_peminjaman where id_detail_peminjaman='$id'",true);
+				$ambilhr=$this->db->query("select datediff(now(), '$tglkembali') as jumlah from tbl_detail_peminjaman where id_detail_peminjaman='$iddet'",true);
 				$jum_hari=$ambilhr->jumlah;
 				if($tgl_pengembalian=='0000-00-00'){
 					if($jum_hari>=0){
@@ -419,7 +421,7 @@ class MainModel extends ModelBase {
 				'idbuku'=>$kdbuku,
 				'judul'=>$judul,
 				'tgl_pinjam'=>datedb_to_tanggal($d->tgl_pinjam, 'd-F-Y'),
-				'tgl_kembali'=>datedb_to_tanggal($d->tgl_kembali, 'd-F-Y'),
+				'tgl_kembali'=>($d->tgl_kembali == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_kembali, 'd-F-Y')),
 				'denda'=>$denda
 			);
 		}
@@ -464,4 +466,59 @@ class MainModel extends ModelBase {
 		return $this->view_pengaturananggota();
 	}
 		
+		
+	public function view_berandaanggota($iofiles) {
+		$q=	$s=array();
+		
+		$ambilbkbr=$this->db->query("select * from  tbl_buku order by id_buku desc limit 5");
+		if(count($ambilbkbr)<=0)  return FALSE;
+		else{
+			for($i=0; $i<count($ambilbkbr);$i++){
+				$d=$ambilbkbr[$i];
+					
+				$q[]=array(
+					'kode'=>$d->kode_buku,
+					'isbn'=>$d->isbn_buku,
+					'judul'=>$d->judul_buku,
+					'sampul'=>$d->sampul_buku,
+					'penempatan'=>$d->no_penempatan,
+					'pengarang'=>$d->pengarang_buku,
+					'macam'=>$d->macam_buku,
+					'bahasa'=>$d->bahasa_buku,
+					'penerbit'=>$d->penerbit_buku,
+					'tahun'=>$d->tahun_terbit_buku
+				);
+			}
+		}
+		
+		$ambilflbr=$this->db->query("select * from  tbl_file order by kode_file desc limit 5");
+		if(count($ambilflbr)<=0)  return FALSE;
+		else{
+			for($i=0; $i<count($ambilflbr);$i++){
+				$d=$ambilflbr[$i];
+				$nama=$d->nama_file;
+				$attr=$iofiles->get_attrib($nama);
+				$s[]=array(
+					'kode'=>$d->kode_file,
+					'judul'=>$d->judul_file,
+					'sampul'=>$d->sampul_file,
+					'ukuran'=>$this->human_filesize($attr['size']).'B',
+					'tipe'=>$attr['type'],
+					'pengarang'=>$d->pengarang_file,
+					'macam'=>$d->macam_file,
+					'bahasa'=>$d->bahasa_file,
+					'penerbit'=>$d->penerbit_file,
+					'tahun'=>$d->tahun_terbit_file,
+					'tgl'=>($d->tgl_upload == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_upload, 'd-F-Y')),
+					'ringkasan'=>$d->ringkasan
+				);
+			}
+		}
+		
+		
+		return array(
+			'bukubaru' =>$q,
+			'filebaru' =>$s
+		);
+	}
 }
