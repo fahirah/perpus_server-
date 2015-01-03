@@ -264,6 +264,17 @@ $app->get('/cetak/anggota/:id', function($id) use ($app,$ctr) {
 // ----------------------------------------------------------------
 /**
  * Method: GET
+ * Verb: cetak pdf file
+ */
+$app->options('/cetakpdf/file', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/cetakpdf/file', function() use ($app,$ctr) {
+	$ctr->load('model','cetak');
+	$ctr->CetakModel->cetak_pdffile();
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
  * Verb: buku
  */
 $app->options('/admin/buku', function() use($app) { $app->status(200); $app->stop(); });
@@ -728,4 +739,50 @@ $app->post('/user/pengaturan', function() use ($app,$ctr) {
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: cetak pdf anggota
+ */
+$app->options('/cetakpdf/anggota', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/cetakpdf/anggota', function() use ($app,$ctr) {
+	$ctr->load('model','cetak');
+	$ctr->CetakModel->cetak_pdfanggota();
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: cetak pdf buku
+ */
+$app->options('/cetakpdf/buku', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/cetakpdf/buku', function() use ($app,$ctr) {
+	$ctr->load('model','cetak');
+	$ctr->CetakModel->cetak_pdfbuku();
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: cetak pdf peminjaman
+ */
+$app->options('/cetakpdf/peminjaman', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/cetakpdf/peminjaman', function() use ($app,$ctr) {
+	$ctr->load('model','cetak');
+	$ctr->load('helper', 'date');
+	$ctr->CetakModel->cetak_pdfpeminjaman();
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: cetak pdf kas
+ */
+$app->options('/cetakpdf/kas', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/cetakpdf/kas', function() use ($app,$ctr) {
+	$ctr->load('model','cetak');
+	$ctr->load('helper', 'date');
+	$ctr->CetakModel->cetak_pdfkas();
 });

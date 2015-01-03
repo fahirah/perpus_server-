@@ -37,7 +37,7 @@ class FileModel extends ModelBase {
 		}else if($jenis=="pengarang"){
 			$hasil=$this->db->query("SELECT * FROM tbl_file where pengarang_file like '%{$kata}%' order by tgl_upload desc limit $start,$tdph");
 		}else if($jenis=="penerbit"){
-			$hasil=$this->db->query("SELECT * FROM tbl_file where penerbit_file like '%{$kata}%' limit order by tgl_upload desc $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_file where penerbit_file like '%{$kata}%' limit order by tgl_upload desc limit $start,$tdph");
 		}
 		
 		if(count($hasil)<=0) return FALSE;
