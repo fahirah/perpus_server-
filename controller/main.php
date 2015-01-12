@@ -593,6 +593,20 @@ $app->delete('/admin/peminjaman/:kode', function($kode) use ($app,$ctr) {
 	json_output($app, $r);
 });
 
+// ----------------------------------------------------------------
+/**
+ * Method: DELETE
+ * Verb: kas/denda
+ */
+$app->options('/admin/peminjaman/kas/:kode', function() use($app) { $app->status(200); $app->stop(); });
+$app->delete('/admin/peminjaman/kas/:kode', function($kode) use ($app,$ctr) {
+	$ctr->load('model','peminjaman');
+	$r=$ctr->PeminjamanModel->delete_denda($kode);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
 
 // ----------------------------------------------------------------
 /**
@@ -749,7 +763,19 @@ $app->post('/user/pengaturan', function() use ($app,$ctr) {
 $app->options('/cetakpdf/anggota', function() use($app) { $app->status(200); $app->stop(); });
 $app->get('/cetakpdf/anggota', function() use ($app,$ctr) {
 	$ctr->load('model','cetak');
+	$ctr->load('file', 'lib/class/html2pdf.class.php');
 	$ctr->CetakModel->cetak_pdfanggota();
+	
+	$content = ob_get_clean();
+	try {
+		$html2pdf = new HTML2PDF('L', 'A4', 'en');
+		$html2pdf->setDefaultFont('Arial');
+		$html2pdf->writeHTML($content);
+		$html2pdf->Output('anggota.pdf', 'D');
+	} catch(HTML2PDF_exception $e) {
+		echo $e;
+		exit;
+	}
 });
 
 // ----------------------------------------------------------------
@@ -760,7 +786,19 @@ $app->get('/cetakpdf/anggota', function() use ($app,$ctr) {
 $app->options('/cetakpdf/buku', function() use($app) { $app->status(200); $app->stop(); });
 $app->get('/cetakpdf/buku', function() use ($app,$ctr) {
 	$ctr->load('model','cetak');
+	$ctr->load('file', 'lib/class/html2pdf.class.php');
 	$ctr->CetakModel->cetak_pdfbuku();
+	
+	$content = ob_get_clean();
+	try {
+		$html2pdf = new HTML2PDF('L', 'A4', 'en');
+		$html2pdf->setDefaultFont('Arial');
+		$html2pdf->writeHTML($content);
+		$html2pdf->Output('buku.pdf', 'D');
+	} catch(HTML2PDF_exception $e) {
+		echo $e;
+		exit;
+	}
 });
 
 // ----------------------------------------------------------------
@@ -772,7 +810,18 @@ $app->options('/cetakpdf/peminjaman', function() use($app) { $app->status(200); 
 $app->get('/cetakpdf/peminjaman', function() use ($app,$ctr) {
 	$ctr->load('model','cetak');
 	$ctr->load('helper', 'date');
+	$ctr->load('file', 'lib/class/html2pdf.class.php');
 	$ctr->CetakModel->cetak_pdfpeminjaman();
+	$content = ob_get_clean();
+	try {
+		$html2pdf = new HTML2PDF('L', 'A4', 'en');
+		$html2pdf->setDefaultFont('Arial');
+		$html2pdf->writeHTML($content);
+		$html2pdf->Output('peminjaman.pdf', 'D');
+	} catch(HTML2PDF_exception $e) {
+		echo $e;
+		exit;
+	}
 });
 
 // ----------------------------------------------------------------
@@ -784,5 +833,16 @@ $app->options('/cetakpdf/kas', function() use($app) { $app->status(200); $app->s
 $app->get('/cetakpdf/kas', function() use ($app,$ctr) {
 	$ctr->load('model','cetak');
 	$ctr->load('helper', 'date');
+	$ctr->load('file', 'lib/class/html2pdf.class.php');
 	$ctr->CetakModel->cetak_pdfkas();
+		$content = ob_get_clean();
+	try {
+		$html2pdf = new HTML2PDF('L', 'A4', 'en');
+		$html2pdf->setDefaultFont('Arial');
+		$html2pdf->writeHTML($content);
+		$html2pdf->Output('kas.pdf', 'D');
+	} catch(HTML2PDF_exception $e) {
+		echo $e;
+		exit;
+	}
 });

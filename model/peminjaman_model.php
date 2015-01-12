@@ -295,9 +295,12 @@ class PeminjamanModel extends ModelBase {
 	
 	public function delete_peminjaman($kode){
 		$kode = floatval($kode);
-		$hasil=$this->db->query("select * from tbl_detail_peminjaman where id_detail_peminjaman='$kode'");
-		
 		$this->db->query("delete from tbl_detail_peminjaman where id_detail_peminjaman='$kode'");
+	}
+	
+	public function delete_denda($kode){
+		$kode = floatval($kode);
+		$this->db->query("delete from tbl_denda where kode_denda='$kode'");
 	}
 	
 	public function view_kas() {

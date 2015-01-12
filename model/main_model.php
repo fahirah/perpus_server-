@@ -47,38 +47,33 @@ class MainModel extends ModelBase {
 		$numpagebk=0;
 		
 		if(empty($tipe)){
-			$where = array();
-			if ( ! empty($judul)) $where[] = "judul_buku like '%{$judul}%'";
-			if ( ! empty($pengarang)) $where[] = "pengarang_buku like '%{$pengarang}%'";
-			if ( ! empty($penerbit)) $where[] = "penerbit_buku like '%{$penerbit}%'";
-			if ( ! empty($isbn)) $where[] = "isbn_buku like '%{$isbn}%'";
-			
-			$sqlcount = "select count(id_buku) as hasil from tbl_buku";
-			$sql = "SELECT * FROM tbl_buku";
-			
-			if ( ! empty($where)) {
-				$sqlcount .= " WHERE " . implode(' OR ', $where);
-				$sql .= " WHERE " . implode(' OR ', $where);
-			}
-			
-			$totalhalaman=$this->db->query($sqlcount,true);
-			
-			$numpagebk=ceil($totalhalaman->hasil/$tdph);
-			$startbk=$cpagebk*$tdph;
-					
-			$hasil=$this->db->query($sql . " limit $startbk,$tdph");
+			$numpagebk=1;
+			$hasil=$this->db->query("select * from tbl_buku order by rand() limit 2");
 			
 			if(count($hasil)<=0)  return FALSE;
 			else{
 				for($i=0; $i<count($hasil);$i++){
 					$d=$hasil[$i];
+					$isbn=$d->isbn_buku;
+					$judul=$d->judul_buku;
+					$pengarang=$d->pengarang_buku;
+					$penerbit=$d->penerbit_buku;
+					$tahun=$d->tahun_terbit_buku;
 					
+					$pnmptn=$d->no_penempatan;
+					$b=strlen($pnmptn);
+					$c=$b-4;
+					$ddc=substr($pnmptn,0,$c);
+					$ambil=$this->db->query("select count(id_buku) as jumlah from tbl_buku where substr(no_penempatan, 1,$c)='$ddc' and isbn_buku='$isbn' and judul_buku='$judul' and pengarang_buku='$pengarang' and penerbit_buku='$penerbit' and tahun_terbit_buku='$tahun'",true);
+					$jumlah=$ambil->jumlah;
+				
+				
 					$r[]=array(
 						'kode'=>$d->kode_buku,
 						'isbn'=>$d->isbn_buku,
 						'judul'=>$d->judul_buku,
 						'sampul'=>$d->sampul_buku,
-						'penempatan'=>$d->no_penempatan,
+						'penempatan'=>$ddc,
 						'pengarang'=>$d->pengarang_buku,
 						'macam'=>$d->macam_buku,
 						'bahasa'=>$d->bahasa_buku,
@@ -88,25 +83,8 @@ class MainModel extends ModelBase {
 				}
 			}
 			
-			$wherefl = array();
-			if ( ! empty($judul)) $wherefl[] = "judul_file like '%{$judul}%'";
-			if ( ! empty($pengarang)) $wherefl[] = "pengarang_file like '%{$pengarang}%'";
-			if ( ! empty($penerbit)) $wherefl[] = "penerbit_file like '%{$penerbit}%'";
-			
-			$sqlcountfl = "select count(kode_file) as hasil from tbl_file";
-			$sqlfl = "SELECT * FROM tbl_file";
-			
-			if ( ! empty($wherefl)) {
-				$sqlcountfl .= " WHERE " . implode(' OR ', $wherefl);
-				$sqlfl .= " WHERE " . implode(' OR ', $wherefl);
-			}
-		
-			$totalhalamanfl=$this->db->query($sqlcountfl,true);
-			
-			$numpagefl=ceil($totalhalamanfl->hasil/$tdph);
-			$startfl=$cpagefl*$tdph;
-					
-			$hasilfl=$this->db->query($sqlfl . " limit $startfl,$tdph");
+			$numpagefl=1;
+			$hasilfl=$this->db->query("select * from tbl_file order by rand() limit 2");
 			
 			if(count($hasilfl)<=0)  return FALSE;
 			else{
@@ -131,7 +109,7 @@ class MainModel extends ModelBase {
 				}
 			}
 		}else if($tipe=="buku"){
-				$where = array();
+			$where = array();
 			if ( ! empty($judul)) $where[] = "judul_buku like '%{$judul}%'";
 			if ( ! empty($pengarang)) $where[] = "pengarang_buku like '%{$pengarang}%'";
 			if ( ! empty($penerbit)) $where[] = "penerbit_buku like '%{$penerbit}%'";
@@ -150,9 +128,9 @@ class MainModel extends ModelBase {
 			$numpagebk=ceil($totalhalaman->hasil/$tdph);
 			$startbk=$cpagebk*$tdph;
 			$r=array();
-			
+		
 			$hasil=$this->db->query($sql . " limit $startbk,$tdph");
-			
+					
 			if(count($hasil)<=0)  return FALSE;
 			else{
 				for($i=0; $i<count($hasil);$i++){

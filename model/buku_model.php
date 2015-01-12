@@ -57,7 +57,8 @@ class BukuModel extends ModelBase {
 				$jumlah=$ambiljml->jumlah;
 				$penempatan=$d->no_penempatan;
 				$pn=explode("/",$penempatan);
-				
+		
+		
 				$r[]=array(
 					'id'=>$id,
 					'kode'=>$d->kode_buku,
@@ -87,6 +88,22 @@ class BukuModel extends ModelBase {
 		
 		if(! $d)  return FALSE;				
 		
+		$isbn=$d->isbn_buku;
+		$judul=$d->judul_buku;
+		$pengarang=$d->pengarang_buku;
+		$penerbit=$d->penerbit_buku;
+		$tahun=$d->tahun_terbit_buku;
+		
+		$pnmptn=$d->no_penempatan;
+		$b=strlen($pnmptn);
+		$c=$b-4;
+		$ddc=substr($pnmptn,0,$c);
+		$ambil=$this->db->query("select count(id_buku) as jumlah from tbl_buku where substr(no_penempatan, 1,$c)='$ddc' and isbn_buku='$isbn' and judul_buku='$judul' and pengarang_buku='$pengarang' and penerbit_buku='$penerbit' and tahun_terbit_buku='$tahun'",true);
+		$jumlahbk=$ambil->jumlah;
+				
+		//$ambiljum=$this->db->query("select count(id_buku)as jumlah from tbl_buku where isbn_buku='$isbn' and judul_buku='$judul' and pengarang_buku='$pengarang' and penerbit_buku='$penerbit' and tahun_terbit_buku='$tahun'",true);
+		//$jumlahbk=$ambiljum->jumlah;
+				
 		$r[]=array(
 			'id'=>$d->id_buku,
 			'kode'=>$d->kode_buku,
@@ -96,9 +113,10 @@ class BukuModel extends ModelBase {
 			'pengarang'=>$d->pengarang_buku,
 			'macam'=>$d->macam_buku,
 			'bahasa'=>$d->bahasa_buku,
-			'penempatan'=>$d->no_penempatan,
+			'penempatan'=>$ddc,
 			'penerbit'=>$d->penerbit_buku,
-			'tahun'=>$d->tahun_terbit_buku
+			'tahun'=>$d->tahun_terbit_buku,
+			'jumlahbk'=>$jumlahbk
 		);
 	
 		$ambilid=$this->db->query("select id_buku from tbl_buku where kode_buku='$kode'",true);

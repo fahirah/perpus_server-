@@ -130,7 +130,11 @@ $(window).load(function(){
 			$hasil=$this->db->query("select * from tbl_anggota where nama_anggota like '%{$kata}%'");
 		}
 ?>
-	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" >
+<html xmlns="http://www.w3.org/1999/xhtml"> <!-- Bagian halaman HTML yang akan konvert -->
+<head>
+</head>
+<body>
+	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" width="100%">
 		<thead>
 			<tr>
 				<th>NO</th>
@@ -177,30 +181,8 @@ $(window).load(function(){
 ?>
 		</tbody>
 	</table>
-<?php
-	/*$filename="anggota.pdf"; //ubah untuk menentukan nama file pdf yang dihasilkan nantinya
-	//==========================================================================================================
-	//Copy dan paste langsung script dibawah ini,untuk mengetahui lebih jelas tentang fungsinya silahkan baca-baca tutorial tentang HTML2PDF
-	//==========================================================================================================
-	$content = ob_get_clean();
-	$content = '<page style="font-family: freeserif">'.nl2br($content).'</page>';
-	 require_once(dirname(__FILE__).'/htmltopdf/html2pdf.php');
-	 try{
-		  $html2pdf = new HTML2PDF('P','A4','en', false, 'ISO-8859-15',array(30, 0, 20, 0));
-		  $html2pdf->setDefaultFont('Arial');
-		  $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-		  $html2pdf->Output($filename);
-	 }
-	 catch(HTML2PDF_exception $e) { echo $e; }*/
-?>
-<script src="/lib/jquery-1.10.2.min.js"></script>
-<script>
-$(window).load(function(){
-	//window.print();
-	//window.close();
-});
-	//window.close();
-	</script>
+</body>
+</html>
 <?php
 	}
 	
@@ -224,7 +206,7 @@ $(window).load(function(){
 			$hasil=$this->db->query("select * from tbl_buku where penerbit_buku like '%{$kata}%'");
 		}
 ?>
-	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" >
+	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" width="100%">
 		<thead>
 			<tr>
 				<th>NO.</th>
@@ -280,31 +262,6 @@ $(window).load(function(){
 		</tbody>
 	</table>
 <?php
-	/*$filename="anggota.pdf"; //ubah untuk menentukan nama file pdf yang dihasilkan nantinya
-	//==========================================================================================================
-	//Copy dan paste langsung script dibawah ini,untuk mengetahui lebih jelas tentang fungsinya silahkan baca-baca tutorial tentang HTML2PDF
-	//==========================================================================================================
-	$content = ob_get_clean();
-	$content = '<page style="font-family: freeserif">'.nl2br($content).'</page>';
-	 require_once(dirname(__FILE__).'/htmltopdf/html2pdf.php');
-	 try{
-		  $html2pdf = new HTML2PDF('P','A4','en', false, 'ISO-8859-15',array(30, 0, 20, 0));
-		  $html2pdf->setDefaultFont('Arial');
-		  $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-		  $html2pdf->Output($filename);
-	 }
-	 catch(HTML2PDF_exception $e) { echo $e; }*/
-?>
-<script src="/lib/jquery-1.10.2.min.js"></script>
-<script>
-$(window).load(function(){
-	//window.print();
-	//window.close();
-});
-	//window.close();
-</script>			
-			
-<?php
 	}
 	
 	public function cetak_pdffile(){
@@ -323,7 +280,7 @@ $(window).load(function(){
 			$hasil=$this->db->query("SELECT * FROM tbl_file where penerbit_file like '%{$kata}%' limit order by tgl_upload desc ");
 		}
 ?>
-	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" >
+	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" width="100%">
 		<thead>
 			<tr>
 				<th>NO.</th>
@@ -387,30 +344,7 @@ $(window).load(function(){
 ?>
 		</tbody>
 	</table>
-<?php
-	/*$filename="anggota.pdf"; //ubah untuk menentukan nama file pdf yang dihasilkan nantinya
-	//==========================================================================================================
-	//Copy dan paste langsung script dibawah ini,untuk mengetahui lebih jelas tentang fungsinya silahkan baca-baca tutorial tentang HTML2PDF
-	//==========================================================================================================
-	$content = ob_get_clean();
-	$content = '<page style="font-family: freeserif">'.nl2br($content).'</page>';
-	 require_once(dirname(__FILE__).'/htmltopdf/html2pdf.php');
-	 try{
-		  $html2pdf = new HTML2PDF('P','A4','en', false, 'ISO-8859-15',array(30, 0, 20, 0));
-		  $html2pdf->setDefaultFont('Arial');
-		  $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-		  $html2pdf->Output($filename);
-	 }
-	 catch(HTML2PDF_exception $e) { echo $e; }*/
-?>
-<script src="/lib/jquery-1.10.2.min.js"></script>
-<script>
-$(window).load(function(){
-	//window.print();
-	//window.close();
-});
-	//window.close();
-	</script>
+
 <?php
 	}
 	
@@ -454,7 +388,7 @@ $(window).load(function(){
 			$hasil=$this->db->query("select * from tbl_detail_peminjaman where id_buku='$jdbk'");
 		}
 ?>
-	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" >
+	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" width="100%">
 		<thead>
 			<tr>
 				<th>NO.</th>
@@ -525,30 +459,7 @@ $(window).load(function(){
 ?>
 		</tbody>
 	</table>
-<?php
-	/*$filename="anggota.pdf"; //ubah untuk menentukan nama file pdf yang dihasilkan nantinya
-	//==========================================================================================================
-	//Copy dan paste langsung script dibawah ini,untuk mengetahui lebih jelas tentang fungsinya silahkan baca-baca tutorial tentang HTML2PDF
-	//==========================================================================================================
-	$content = ob_get_clean();
-	$content = '<page style="font-family: freeserif">'.nl2br($content).'</page>';
-	 require_once(dirname(__FILE__).'/htmltopdf/html2pdf.php');
-	 try{
-		  $html2pdf = new HTML2PDF('P','A4','en', false, 'ISO-8859-15',array(30, 0, 20, 0));
-		  $html2pdf->setDefaultFont('Arial');
-		  $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-		  $html2pdf->Output($filename);
-	 }
-	 catch(HTML2PDF_exception $e) { echo $e; }*/
-?>
-<script src="/lib/jquery-1.10.2.min.js"></script>
-<script>
-$(window).load(function(){
-	//window.print();
-	//window.close();
-});
-	//window.close();
-</script>		
+		
 <?php
 	}
 	
@@ -569,7 +480,7 @@ $(window).load(function(){
 		}
 	
 	?>
-	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" >
+	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" width="100%">
 		<thead>
 			<tr>
 				<th>NO.</th>
@@ -618,30 +529,6 @@ $(window).load(function(){
 			</tr>
 		</tbody>
 	</table>
-<?php
-	/*$filename="anggota.pdf"; //ubah untuk menentukan nama file pdf yang dihasilkan nantinya
-	//==========================================================================================================
-	//Copy dan paste langsung script dibawah ini,untuk mengetahui lebih jelas tentang fungsinya silahkan baca-baca tutorial tentang HTML2PDF
-	//==========================================================================================================
-	$content = ob_get_clean();
-	$content = '<page style="font-family: freeserif">'.nl2br($content).'</page>';
-	 require_once(dirname(__FILE__).'/htmltopdf/html2pdf.php');
-	 try{
-		  $html2pdf = new HTML2PDF('P','A4','en', false, 'ISO-8859-15',array(30, 0, 20, 0));
-		  $html2pdf->setDefaultFont('Arial');
-		  $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-		  $html2pdf->Output($filename);
-	 }
-	 catch(HTML2PDF_exception $e) { echo $e; }*/
-?>
-<script src="/lib/jquery-1.10.2.min.js"></script>
-<script>
-$(window).load(function(){
-	//window.print();
-	//window.close();
-});
-	//window.close();
-</script>		
 <?php
 	}
 }

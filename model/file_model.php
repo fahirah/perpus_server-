@@ -122,9 +122,9 @@ class FileModel extends ModelBase {
 			'nmu'=>$namaup,
 			'status'=>$status,
 			'macam'=>$d->macam_file,
-			'bahasa'=>$d->bahasa_file,
+			'bahasa'=>($d->bahasa_file == '' ? '-' : $d->bahasa_file),
 			'penerbit'=>($d->penerbit_file == '' ? '-' : $d->penerbit_file),
-			'tahun'=>$d->tahun_terbit_file,
+			'tahun'=>($d->tahun_terbit_file== '' ? '-' : $d->tahun_terbit_file),
 			'ringkasan'=>$d->ringkasan,
 			'tgl'=>date('d-m-Y', strtotime($d->tgl_upload))
 		);
