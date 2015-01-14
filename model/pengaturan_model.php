@@ -108,7 +108,7 @@ class PengaturanModel extends ModelBase {
 		$nama=$this->db->escape_str($nama);
 		$jk=$this->db->escape_str($jk);
 		$un=$this->db->escape_str($un);
-		
+	
 		//edit
 		$edit=$this->db->query("update tbl_petugas set nama_petugas='$nama', jeniskelamin_petugas='$jk', telp_petugas='$telp', username='$un' where id_petugas='$idp'");
 		

@@ -210,7 +210,11 @@ class FileModel extends ModelBase {
 		
 		if (empty($id)) {
 			//insert
-			$ins=$this->db->query("INSERT INTO tbl_file VALUES(0,'$filepath2', '$filepath','$judul','$pengarang','$macam','$bahasa','$penerbit','$tahun', '$ringkasan', NOW(), '$petugas','$dosen')");
+			if($petugas!=0){
+				$ins=$this->db->query("insert into tbl_file VALUES(0,null,'$petugas','$filepath2', '$filepath','$judul','$pengarang','$ringkasan',NOW(),'$macam','$bahasa','$penerbit','$tahun')");
+			}else{
+				$ins=$this->db->query("insert into tbl_file VALUES(0,'$dosen',null,'$filepath2', '$filepath','$judul','$pengarang','$ringkasan',NOW(),'$macam','$bahasa','$penerbit','$tahun')");
+			}
 		} else {
 			// edit
 			$ambil=$this->db->query("select nama_file, sampul_file from tbl_file where kode_file='$id'",true);

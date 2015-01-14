@@ -84,7 +84,7 @@ class AnggotaModel extends ModelBase {
 			$idan=$cek->idan;
 			$idan++;
 			//insert
-			$ins=$this->db->query("INSERT INTO tbl_anggota VALUES('$idan','$nama','$identitas','$alamat','$telp','$gender','$status','$prodi','$pw')");
+			$ins=$this->db->query("insert into tbl_anggota VALUES('$idan','$prodi','$nama','$identitas','$alamat','$telp','$gender','$status','$pw')");
 			
 			generate_barcode($idan);
 		} else {

@@ -194,9 +194,9 @@ class BukuModel extends ModelBase {
 				$kodebr="B".sprintf("%04s",$kodebk);
 				$pn=$nopnmptn."/C.".$i;
 				if($filename != null){
-					$ins=$this->db->query("INSERT INTO tbl_buku VALUES(0,'$kodebr','$isbn','$filepath','$judul','$pengarang','$macam','$bahasa','$pn','$penerbit','$tahun')");
+					$ins=$this->db->query("insert into tbl_buku VALUES(0,'$kodebr','$isbn','$filepath','$judul','$pengarang','$macam','$bahasa','$pn','$penerbit','$tahun')");
 				}else{
-					$ins=$this->db->query("INSERT INTO tbl_buku VALUES(0,'$kodebr','$isbn','sampul/sampul_buku.jpg','$judul','$pengarang','$macam','$bahasa','$pn','$penerbit','$tahun')");
+					$ins=$this->db->query("insert into tbl_buku VALUES(0,'$kodebr','$isbn','sampul/sampul_buku.jpg','$judul','$pengarang','$macam','$bahasa','$pn','$penerbit','$tahun')");
 				}
 				// panggil
 				generate_barcode($kodebr);
