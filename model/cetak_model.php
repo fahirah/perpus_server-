@@ -134,6 +134,7 @@ $(window).load(function(){
 <head>
 </head>
 <body>
+	<p>DATA ANGGOTA</p>
 	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" width="100%">
 		<thead>
 			<tr>
@@ -206,6 +207,7 @@ $(window).load(function(){
 			$hasil=$this->db->query("select * from tbl_buku where penerbit_buku like '%{$kata}%'");
 		}
 ?>
+	<p>DATA BUKU</p>
 	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" width="100%">
 		<thead>
 			<tr>
@@ -280,6 +282,7 @@ $(window).load(function(){
 			$hasil=$this->db->query("SELECT * FROM tbl_file where penerbit_file like '%{$kata}%' limit order by tgl_upload desc ");
 		}
 ?>
+	<p>DATA FILE</p>
 	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" width="100%">
 		<thead>
 			<tr>
@@ -388,6 +391,7 @@ $(window).load(function(){
 			$hasil=$this->db->query("select * from tbl_detail_peminjaman where id_buku='$jdbk'");
 		}
 ?>
+	<p>DATA PEMINJAMAN</p>
 	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" width="100%">
 		<thead>
 			<tr>
@@ -480,6 +484,7 @@ $(window).load(function(){
 		}
 	
 	?>
+	<p>DATA KAS</p>
 	<table border="1" style="border-collapse: collapse;" cellpadding="3" cellspacing="2" width="100%">
 		<thead>
 			<tr>

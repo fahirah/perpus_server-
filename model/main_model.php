@@ -420,7 +420,8 @@ class MainModel extends ModelBase {
 			'jk'=>$ambilpt->jeniskelamin_anggota,
 			'gender'=>($ambilpt->jeniskelamin_anggota == 'P' ? 'Perempuan' : 'Laki-laki'),
 			'telp'=>$ambilpt->telp_anggota,
-			'alamat'=>$ambilpt->alamat_anggota
+			'alamat'=>$ambilpt->alamat_anggota,
+			'pw'=>''
 		);	
 		
 		return array(

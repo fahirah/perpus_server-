@@ -234,7 +234,7 @@ class PeminjamanModel extends ModelBase {
 		}
 		
 		foreach($buku as $key => $judul){			
-			$ins2=$this->db->query("insert into tbl_detail_peminjaman VALUES(null, '$anggota', '$idp', '$judul','$tgl_pinjam', '$tgl_kembali', '', '')");
+			$ins2=$this->db->query("insert into tbl_detail_peminjaman VALUES(null, '$judul', '$idp', '$anggota','$tgl_pinjam', '$tgl_kembali', '', '')");
 			
 		}
 		return $this->view_peminjaman();

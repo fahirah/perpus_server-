@@ -19,7 +19,7 @@ class BerandaModel extends ModelBase {
 		$ambilanggota=$this->db->query("select count(id_anggota) as jum_anggota from tbl_anggota ",true);
 		$jumlah_anggota=$ambilanggota->jum_anggota;
 		
-		$ambilbuku=$this->db->query("select count(id_buku) as jum_buku from tbl_buku group by isbn_buku, judul_buku,pengarang_buku,penerbit_buku, tahun_terbit_buku ",true);
+		$ambilbuku=$this->db->query("select count(id_buku) as jum_buku from tbl_buku  ",true);
 		$jumlah_buku=$ambilbuku->jum_buku;
 		
 		$ambilfile=$this->db->query("select count(kode_file) as jum_file from tbl_file",true);
@@ -28,7 +28,7 @@ class BerandaModel extends ModelBase {
 		$ambildipinjam=$this->db->query("select count(id_buku) as banyak_dipinjam, id_buku from tbl_detail_peminjaman group by(id_buku) order by banyak_dipinjam desc limit 1",true);
 		$idbuku=$ambildipinjam->id_buku;
 		$ambilnmbk=$this->db->query("select judul_buku from tbl_buku where id_buku='$idbuku'",true);
-		$judul=$ambilnmbk->judul_buku;
+		$judulpjm=$ambilnmbk->judul_buku;
 		
 		$ambildiunduh=$this->db->query("select count(kode_file) as banyak_diunduh, kode_file from tbl_aktivitas group by(kode_file) order by banyak_diunduh desc limit 1",true);
 		$kodefile=$ambildiunduh->kode_file;
@@ -37,7 +37,7 @@ class BerandaModel extends ModelBase {
 		
 		$q=	$s=array();
 		
-		$ambilbkbr=$this->db->query("select * from  tbl_buku group by isbn_buku, judul_buku,pengarang_buku,penerbit_buku, tahun_terbit_buku order by id_buku desc");
+		$ambilbkbr=$this->db->query("select * from  tbl_buku group by isbn_buku, judul_buku,pengarang_buku,penerbit_buku, tahun_terbit_buku order by id_buku desc limit 5");
 		if(count($ambilbkbr)<=0)  return FALSE;
 		else{
 			for($i=0; $i<count($ambilbkbr);$i++){
@@ -73,6 +73,8 @@ class BerandaModel extends ModelBase {
 					'bahasa'=>$d->bahasa_buku,
 					'penerbit'=>$d->penerbit_buku,
 					'tahun'=>$d->tahun_terbit_buku,
+					'kota'=>$d->kota_terbit_buku,
+					'inventaris'=>$d->no_inventaris,
 					'jumlah'=>$jumlah
 				);
 			}
@@ -107,7 +109,7 @@ class BerandaModel extends ModelBase {
 			'jum_anggota'=>$jumlah_anggota,
 			'jum_buku'=>$jumlah_buku,
 			'jum_file'=>$jumlah_file,
-			'judul'=>$judul,
+			'judul'=>$judulpjm,
 			'nama'=>$namafl,
 			'bukubaru' =>$q,
 			'filebaru' =>$s

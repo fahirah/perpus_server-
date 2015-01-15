@@ -43,7 +43,8 @@ class PengaturanModel extends ModelBase {
 				'un'=>$ambilpt->username,
 				'jk'=>$ambilpt->jeniskelamin_petugas,
 				'gender'=>($ambilpt->jeniskelamin_petugas == 'P' ? 'Perempuan' : 'Laki-laki'),
-				'telp'=>$ambilpt->telp_petugas
+				'telp'=>$ambilpt->telp_petugas,
+				'pw'=>''
 			);
 				
 		}
@@ -108,13 +109,18 @@ class PengaturanModel extends ModelBase {
 		$nama=$this->db->escape_str($nama);
 		$jk=$this->db->escape_str($jk);
 		$un=$this->db->escape_str($un);
-	
-		//edit
-		$edit=$this->db->query("update tbl_petugas set nama_petugas='$nama', jeniskelamin_petugas='$jk', telp_petugas='$telp', username='$un' where id_petugas='$idp'");
-		
-		if(!empty($pw)){
-			$pw=md5($pw);
-			$edit2=$this->db->query("update tbl_petugas set password_petugas='$pw' where id_petugas='$idp'");
+		$cek=$this->db->query("select count(id_petugas) as jml from tbl_petugas where username='$un' and id_petugas!='$idp'",true);
+		$jumlah=$cek->jml;
+		if($jumlah==0){
+			//edit
+			$edit=$this->db->query("update tbl_petugas set nama_petugas='$nama', jeniskelamin_petugas='$jk', telp_petugas='$telp', username='$un' where id_petugas='$idp'");
+			
+			if(!empty($pw)){
+				$pw=md5($pw);
+				$edit2=$this->db->query("update tbl_petugas set password_petugas='$pw' where id_petugas='$idp'");
+			}
+		}else{
+			return FALSE;
 		}
 		return $this->view_pengaturan();
 	}

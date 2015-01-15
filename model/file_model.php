@@ -51,15 +51,16 @@ class FileModel extends ModelBase {
 				$idpt=$d->id_petugas;
 				$idan=$d->id_anggota;
 				
-				if($idpt==0){
+				if($idan!=0){
 					$ambilnm=$this->db->query("select nama_anggota from tbl_anggota where id_anggota='$idan'",true);
 					$nama=$ambilnm->nama_anggota;
-				}else{
+				}
+				if($idpt!=0){
 					$ambilnm=$this->db->query("select nama_petugas from tbl_petugas where id_petugas='$idpt'",true);
 					$nama=$ambilnm->nama_petugas;
 				}
-				$idupload=($d->id_petugas != '0' ? $d->id_petugas : $d->id_anggota);
-				$status=($d->id_petugas != '0' ? 'Petugas' : 'Dosen');
+				$idupload=($d->id_petugas != 0 ? $d->id_petugas : $d->id_anggota);
+				$status=($d->id_petugas != 0 ? 'Petugas' : 'Dosen');
 				
 				$r[]=array(
 					'id'=>$kode,
@@ -218,12 +219,12 @@ class FileModel extends ModelBase {
 		} else {
 			// edit
 			$ambil=$this->db->query("select nama_file, sampul_file from tbl_file where kode_file='$id'",true);
-			if(isset($_FILES['file'])){
+			if(isset($_FILES['file1'])){
 				@unlink($ambil->nama_file);
 				$edit=$this->db->query("update tbl_file set nama_file='$filepath', judul_file='$judul', pengarang_file='$pengarang', macam_file='$macam', bahasa_file='$bahasa', penerbit_file='$penerbit', tahun_terbit_file='$tahun',ringkasan='$ringkasan' where kode_file='$id'");
 			} else if(isset($_FILES['file2'])){
 				@unlink($ambil->sampul_file);
-				$edit=$this->db->query("update tbl_file set sampul_file='$filepath2' where kode_file='$id'");
+				$edit=$this->db->query("update tbl_file set sampul_file='$filepath2', judul_file='$judul', pengarang_file='$pengarang', macam_file='$macam', bahasa_file='$bahasa', penerbit_file='$penerbit', tahun_terbit_file='$tahun',ringkasan='$ringkasan' where kode_file='$id'");
 			}else {
 				$edit=$this->db->query("update tbl_file set judul_file='$judul', pengarang_file='$pengarang', macam_file='$macam', bahasa_file='$bahasa', penerbit_file='$penerbit', tahun_terbit_file='$tahun',ringkasan='$ringkasan' where kode_file='$id'");
 			}
