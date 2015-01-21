@@ -63,7 +63,7 @@ class BerandaModel extends ModelBase {
 				//$jumlah=$ambiljum->jumlah;
 								
 				$q[]=array(
-					'kode'=>$d->kode_buku,
+					'id'=>$d->id_buku,
 					'isbn'=>$d->isbn_buku,
 					'judul'=>$d->judul_buku,
 					'sampul'=>$d->sampul_buku,

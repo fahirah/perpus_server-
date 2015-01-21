@@ -38,10 +38,6 @@ class PeminjamanModel extends ModelBase {
 			$ambilid=$this->db->query("select id_anggota from tbl_anggota where no_identitas='$noid'",true);
 			$idan=$ambilid->id_anggota;
 			$totalhalaman=$this->db->query("select count(id_detail_peminjaman) as hasil from tbl_detail_peminjaman where  id_anggota='$idan'",true);
-		}else if(!empty($kdbuku)){
-			$ambilid=$this->db->query("select id_buku from tbl_buku where kode_buku='$kdbuku'",true);
-			$idbk=$ambilid->id_buku;
-			$totalhalaman=$this->db->query("select count(id_detail_peminjaman) as hasil from tbl_detail_peminjaman where  id_buku='$idbk'",true);
 		}else if(!empty($jdbuku)){
 			$ambilid=$this->db->query("select id_buku from tbl_buku where judul_buku='$jdbuku'",true);
 			$jdbk=$ambilid->id_buku;
@@ -52,34 +48,30 @@ class PeminjamanModel extends ModelBase {
 		$start=$cpagepjm*$tdph;
 		$r=array();
 		
-		$hasil=$this->db->query("select * from tbl_detail_peminjaman  limit $start,$tdph");
+		$hasil=$this->db->query("select * from tbl_detail_peminjaman order by id_detail_peminjaman desc  limit $start,$tdph");
 		if(!empty ($status)){
 			$tgl="0000-00-00";
 			if($status=="dipinjam"){
-				$hasil=$this->db->query("select * from tbl_detail_peminjaman where tgl_pengembalian='$tgl' limit $start,$tdph");
+				$hasil=$this->db->query("select * from tbl_detail_peminjaman where tgl_pengembalian='$tgl' order by id_detail_peminjaman desc limit $start,$tdph");
 			}else if($status=="dikembalikan"){
-				$hasil=$this->db->query("select * from tbl_detail_peminjaman where tgl_pengembalian!='$tgl' limit $start,$tdph");
+				$hasil=$this->db->query("select * from tbl_detail_peminjaman where tgl_pengembalian!='$tgl' order by id_detail_peminjaman desc limit $start,$tdph");
 			}else if($status=="terlambat"){
-				$hasil=$this->db->query("select * from tbl_detail_peminjaman where tgl_kembali < curdate() and tgl_pengembalian='$tgl' limit $start,$tdph");
+				$hasil=$this->db->query("select * from tbl_detail_peminjaman where tgl_kembali < curdate() and tgl_pengembalian='$tgl' order by id_detail_peminjaman desc limit $start,$tdph");
 			}
 		}else if(!empty($tgl)){
-			$hasil=$this->db->query("select * from tbl_detail_peminjaman where tgl_pinjam='$tgl' limit $start,$tdph");
+			$hasil=$this->db->query("select * from tbl_detail_peminjaman where tgl_pinjam='$tgl' order by id_detail_peminjaman desc limit $start,$tdph");
 		}else if(!empty($bulan)){
 			$thn=substr($bulan,0,4);
 			$bln=substr($bulan,5,2);
-			$hasil=$this->db->query("select * from tbl_detail_peminjaman where MONTH(tgl_pinjam)='$bln' and YEAR(tgl_pinjam)='$thn' limit $start,$tdph");
+			$hasil=$this->db->query("select * from tbl_detail_peminjaman where MONTH(tgl_pinjam)='$bln' and YEAR(tgl_pinjam)='$thn' order by id_detail_peminjaman desc limit $start,$tdph");
 		}else if(!empty($noid)){
 			$ambilid=$this->db->query("select id_anggota from tbl_anggota where no_identitas='$noid'",true);
 			$idan=$ambilid->id_anggota;
-			$hasil=$this->db->query("select * from tbl_detail_peminjaman where id_anggota='$idan' limit $start,$tdph");
-		}else if(!empty($kdbuku)){
-			$ambilid=$this->db->query("select id_buku from tbl_buku where kode_buku='$kdbuku'",true);
-			$idbk=$ambilid->id_buku;
-			$hasil=$this->db->query("select * from tbl_detail_peminjaman where id_buku='$idbk' limit $start,$tdph");
+			$hasil=$this->db->query("select * from tbl_detail_peminjaman where id_anggota='$idan' order by id_detail_peminjaman desc limit $start,$tdph");
 		}else if(!empty($jdbuku)){
 			$ambilid=$this->db->query("select id_buku from tbl_buku where judul_buku='$jdbuku'",true);
 			$jdbk=$ambilid->id_buku;
-			$hasil=$this->db->query("select * from tbl_detail_peminjaman where id_buku='$jdbk' limit $start,$tdph");
+			$hasil=$this->db->query("select * from tbl_detail_peminjaman where id_buku='$jdbk' order by id_detail_peminjaman desc limit $start,$tdph");
 		}
 
 		$ambilbyr=$this->db->query("select * from tbl_pengaturan",true);
@@ -96,8 +88,8 @@ class PeminjamanModel extends ModelBase {
 				$noid = $ambilan->no_identitas;
 				
 				$idbk=$d->id_buku;
-				$ambilbk=$this->db->query("select judul_buku,kode_buku from tbl_buku where id_buku='".$idbk."'", true);
-				$kode_buku = $ambilbk-> kode_buku;
+				$ambilbk=$this->db->query("select judul_buku,no_penempatan from tbl_buku where id_buku='".$idbk."'", true);
+				$nopn = $ambilbk-> no_penempatan;
 				$judul = $ambilbk-> judul_buku;
 			
 				$id=$d->id_detail_peminjaman;
@@ -127,7 +119,7 @@ class PeminjamanModel extends ModelBase {
 					'noid'=>$noid,
 					'nmang'=>$nama,
 					'id_buku'=>$idbk,
-					'kd_buku'=>$kode_buku,
+					'nopn'=>$nopn,
 					'judul'=>$judul,
 					'tgl_pinjam'=>datedb_to_tanggal($d->tgl_pinjam, 'd-F-Y'),
 					'tgl_kembali'=>($d->tgl_kembali == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_kembali, 'd-F-Y')),
@@ -185,7 +177,7 @@ class PeminjamanModel extends ModelBase {
 			$status= $cekang->status_anggota;
 		}	
 		
-		$d=$this->db->query("select * from tbl_buku where kode_buku='$kode'",true);
+		$d=$this->db->query("select * from tbl_buku where no_penempatan='002/ABD/M/C.1' and status_buku='L'",true);
 		if(! $d){
 			return FALSE;	
 		}else{
@@ -205,7 +197,7 @@ class PeminjamanModel extends ModelBase {
 		
 		return array(
 			'id'=>$d->id_buku,
-			'kode'=>$d->kode_buku,
+			'nopn'=>$d->no_penempatan,
 			'judul'=>$d->judul_buku,
 			'tgl_pinjam'=>date('d-m-Y'),
 			'tgl_kembali'=>$tgl_kembali

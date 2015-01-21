@@ -69,7 +69,7 @@ class MainModel extends ModelBase {
 				
 				
 					$r[]=array(
-						'kode'=>$d->kode_buku,
+						'id'=>$d->id_buku,
 						'isbn'=>$d->isbn_buku,
 						'judul'=>$d->judul_buku,
 						'sampul'=>$d->sampul_buku,
@@ -137,7 +137,6 @@ class MainModel extends ModelBase {
 					$d=$hasil[$i];
 					
 					$r[]=array(
-						'kode'=>$d->kode_buku,
 						'isbn'=>$d->isbn_buku,
 						'judul'=>$d->judul_buku,
 						'sampul'=>$d->sampul_buku,
@@ -211,7 +210,7 @@ class MainModel extends ModelBase {
 		$tdph=20;
 	
 		if(empty($jenis)){
-			$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where judul_buku like '%{$kata}%' or pengarang_buku like '%{$kata}%'",true);
+			$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where judul_buku like '%{$kata}%' or pengarang_buku like '%{$kata}%' or penerbit_buku='%{$kata}%'",true);
 		}else if($jenis=="judul"){
 			$totalhalaman=$this->db->query("select count(id_buku) as hasil from tbl_buku where judul_buku like '%{$kata}%'",true);
 		}else if($jenis=="pengarang"){
@@ -224,7 +223,7 @@ class MainModel extends ModelBase {
 		$start=$cpagebk*$tdph;
 		$r=array();
 		if(empty($jenis)){
-			$hasil=$this->db->query("SELECT * FROM tbl_buku where judul_buku like '%{$kata}%' or pengarang_buku like '%{$kata}%' limit $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_buku where judul_buku like '%{$kata}%' or pengarang_buku like '%{$kata}%' or penerbit_buku like '%{$kata}% limit $start,$tdph");
 		}else if($jenis=="judul"){
 			$hasil=$this->db->query("SELECT * FROM tbl_buku where judul_buku like '%{$kata}%' limit $start,$tdph");
 		}else if($jenis=="pengarang"){
@@ -239,7 +238,6 @@ class MainModel extends ModelBase {
 				$d=$hasil[$i];
 				
 				$r[]=array(
-					'kode'=>$d->kode_buku,
 					'judul'=>$d->judul_buku,
 					'isbn'=>$d->isbn_buku,
 					'sampul'=>$d->sampul_buku,
@@ -377,8 +375,7 @@ class MainModel extends ModelBase {
 			$d=$hasil[$i];
 				
 				$idbuku=$d->id_buku;
-				$ambilbk=$this->db->query("select kode_buku,judul_buku from tbl_buku where id_buku='$idbuku'",true);
-				$kdbuku=$ambilbk->kode_buku;
+				$ambilbk=$this->db->query("select judul_buku from tbl_buku where id_buku='$idbuku'",true);
 				$judul=$ambilbk->judul_buku;
 				$iddet=$d->id_detail_peminjaman;
 				$tglkembali=$d->tgl_kembali;	
@@ -456,7 +453,6 @@ class MainModel extends ModelBase {
 				$d=$ambilbkbr[$i];
 					
 				$q[]=array(
-					'kode'=>$d->kode_buku,
 					'isbn'=>$d->isbn_buku,
 					'judul'=>$d->judul_buku,
 					'sampul'=>$d->sampul_buku,

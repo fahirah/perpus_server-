@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Waktu pembuatan: 15. Januari 2015 jam 14:57
+-- Waktu pembuatan: 21. Januari 2015 jam 03:49
 -- Versi Server: 5.5.16
 -- Versi PHP: 5.3.8
 
@@ -85,7 +85,6 @@ INSERT INTO `tbl_anggota` (`id_anggota`, `kode_prodi`, `nama_anggota`, `no_ident
 
 CREATE TABLE IF NOT EXISTS `tbl_buku` (
   `id_buku` int(11) NOT NULL AUTO_INCREMENT,
-  `kode_buku` varchar(20) DEFAULT NULL,
   `isbn_buku` varchar(30) DEFAULT NULL,
   `sampul_buku` varchar(60) DEFAULT NULL,
   `judul_buku` varchar(60) DEFAULT NULL,
@@ -97,25 +96,45 @@ CREATE TABLE IF NOT EXISTS `tbl_buku` (
   `kota_terbit_buku` varchar(30) NOT NULL,
   `penerbit_buku` varchar(20) DEFAULT NULL,
   `tahun_terbit_buku` varchar(4) DEFAULT NULL,
+  `ringkasan_buku` text NOT NULL,
+  `status_buku` varchar(20) NOT NULL,
+  `id_petugas` int(11) NOT NULL,
+  `tanggal_input` date NOT NULL,
   PRIMARY KEY (`id_buku`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=28 ;
 
 --
 -- Dumping data untuk tabel `tbl_buku`
 --
 
-INSERT INTO `tbl_buku` (`id_buku`, `kode_buku`, `isbn_buku`, `sampul_buku`, `judul_buku`, `pengarang_buku`, `macam_buku`, `bahasa_buku`, `no_inventaris`, `no_penempatan`, `kota_terbit_buku`, `penerbit_buku`, `tahun_terbit_buku`) VALUES
-(1, 'B0001', '979-80-7070-1', 'sampul/263f782b395519aedbb93d89f13cfc00.jpg', 'Digital Image Processing', 'Rafael Gonzaalez', 'R', 'Inggris', '1/PF/PB', '004/GON/D/C.1', 'USA', 'Copyright', '1993'),
-(2, 'B0002', '970-091-11-01', 'sampul/263f782b395519aedbb93d89f13cfc00.jpg', 'PHP', 'Sterling Hughes', 'U', 'Inggris', '2/PF/PB', '001.6/HUG/P/C.1', 'USA', 'Copyright', '2001'),
-(3, 'B0003', '978-080-190-1', 'sampul/db0b1c33c2588a896b0c2b4d11bea65b.jpg', 'Management Information Systems', 'James Brien', 'U', 'Inggris', '3/PF/PB', '650/BRI/M/C.1', 'USA', 'Copyright', '1994'),
-(4, 'B0004', '987-101-208-19', 'sampul/6bb2ffbea7d4d768210523fd9aca1dc6.jpg', 'Strategi Peningkatan Kualitas Pendidikan Tinggi I', 'M. Zainuddin', 'U', 'Indonesia', '4/PF/PB', '370.1/ZAI/S/C.1', 'Jakarta', 'PPAI-UT', '2001'),
-(5, 'B0005', '870-290-190-1', 'sampul/7ca056b31982c7c5ff10a26961a69f92.jpg', 'Aplikasi Logika Fuzzy', 'Sri Kusmadewi', 'U', 'Indonesia', '5/PF/PB', '005/KUS/A/C.1', 'Yogyakarta', 'Graha Ilmu', '2010'),
-(6, 'B0006', '870-60-1112', 'sampul/sampul_buku.jpg', 'Simulasi Teori dan Aplikasinya', 'Bonett Satya Lelonoo Ojati', 'U', 'Indonesia', '6/PF/PB', '003.3/OJA/S/C.1', 'Yogyakarta', 'Andi', '2007'),
-(7, 'B0007', '980-709-123-9', 'sampul/sampul_buku.jpg', 'Best Tools Hacking & Recovery', 'Jaja Jamaluddin Malik', 'U', 'Indonesia', '7/PF/PB', '001/MAL/B/C.1', 'Yogyakarta', 'andi', '2009'),
-(8, 'B0008', '890-1090-190-1', 'sampul/a32602fe6008a6dc66c6d9f67c7d8009.jpg', 'Pemrograman Flash', 'Amiruddin, ST', 'U', 'Indonesia', '8/PF/PB', '001/AMI/P/C.1', '', 'Graha Komputer', '2011'),
-(9, 'B0009', '890-1090-190-1', 'sampul/a32602fe6008a6dc66c6d9f67c7d8009.jpg', 'Pemrograman Flash', 'Amiruddin, ST', 'U', 'Indonesia', '9/PF/PB', '001/AMI/P/C.2', '', 'Graha Komputer', '2011'),
-(10, 'B0010', '870-70-109-1', 'sampul/ab1ed30a04396ca4fbde241d1ae5970c.jpg', 'HTML5 Programming', 'Muhammad, S,Kom', 'U', 'Indonesia', '10/PF/PB', '001.2/MUH/H/C.1', '', 'andi', '2011'),
-(11, 'B0011', '890-190-001-1', 'sampul/sampul_buku.jpg', 'Beton', 'Ir. Drajad Suryo', 'U', 'Indonesia', '11/PF/PB', '364-1/SUR/B/C.1', 'Surabaya', 'Gramedia', '2000');
+INSERT INTO `tbl_buku` (`id_buku`, `isbn_buku`, `sampul_buku`, `judul_buku`, `pengarang_buku`, `macam_buku`, `bahasa_buku`, `no_inventaris`, `no_penempatan`, `kota_terbit_buku`, `penerbit_buku`, `tahun_terbit_buku`, `ringkasan_buku`, `status_buku`, `id_petugas`, `tanggal_input`) VALUES
+(1, '979-80-7070-1', 'sampul/263f782b395519aedbb93d89f13cfc00.jpg', 'Digital Image Processing', 'Rafael Gonzaalez', 'R', 'Inggris', '1/PF/PB', '004/GON/D/C.1', 'USA', 'Copyright', '1993', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(2, '970-091-11-01', 'sampul/263f782b395519aedbb93d89f13cfc00.jpg', 'PHP', 'Sterling Hughes', 'U', 'Inggris', '2/PF/PB', '001.6/HUG/P/C.1', 'USA', 'Copyright', '2001', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(3, '978-080-190-1', 'sampul/db0b1c33c2588a896b0c2b4d11bea65b.jpg', 'Management Information Systems', 'James Brien', 'U', 'Inggris', '3/PF/PB', '650/BRI/M/C.1', 'USA', 'Copyright', '1994', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(4, '987-101-208-19', 'sampul/6bb2ffbea7d4d768210523fd9aca1dc6.jpg', 'Strategi Peningkatan Kualitas Pendidikan Tinggi I', 'M. Zainuddin', 'U', 'Indonesia', '4/PF/PB', '370.1/ZAI/S/C.1', 'Jakarta', 'PPAI-UT', '2001', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(5, '870-290-190-1', 'sampul/7ca056b31982c7c5ff10a26961a69f92.jpg', 'Aplikasi Logika Fuzzy', 'Sri Kusmadewi', 'U', 'Indonesia', '5/PF/PB', '005/KUS/A/C.1', 'Yogyakarta', 'Graha Ilmu', '2010', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(6, '870-60-1112', 'sampul/sampul_buku.jpg', 'Simulasi Teori dan Aplikasinya', 'Bonett Satya Lelonoo Ojati', 'U', 'Indonesia', '6/PF/PB', '003.3/OJA/S/C.1', 'Yogyakarta', 'Andi', '2007', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(7, '980-709-123-9', 'sampul/sampul_buku.jpg', 'Best Tools Hacking & Recovery', 'Jaja Jamaluddin Malik', 'U', 'Indonesia', '7/PF/PB', '001/MAL/B/C.1', 'Yogyakarta', 'andi', '2009', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(8, '890-1090-190-1', 'sampul/a32602fe6008a6dc66c6d9f67c7d8009.jpg', 'Pemrograman Flash', 'Amiruddin, ST', 'U', 'Indonesia', '8/PF/PB', '001/AMI/P/C.1', '', 'Graha Komputer', '2011', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(9, '890-1090-190-1', 'sampul/a32602fe6008a6dc66c6d9f67c7d8009.jpg', 'Pemrograman Flash', 'Amiruddin, ST', 'U', 'Indonesia', '9/PF/PB', '001/AMI/P/C.2', '', 'Graha Komputer', '2011', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(10, '870-70-109-1', 'sampul/ab1ed30a04396ca4fbde241d1ae5970c.jpg', 'HTML5 Programming', 'Muhammad, S,Kom', 'U', 'Indonesia', '10/PF/PB', '001.2/MUH/H/C.1', '', 'andi', '2011', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(11, '890-190-001-1', 'sampul/sampul_buku.jpg', 'Beton', 'Ir. Drajad Suryo', 'U', 'Indonesia', '11/PF/PB', '364-1/SUR/B/C.1', 'Surabaya', 'Gramedia', '2000', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(12, '9780-0919-1', 'sampul/98ba5f7d4e1ea0493f6a9f793a7a8ecc.jpg', 'php dasar', 'ipin', 'R', 'Indonesia', '12/PF/PB', '971/IPI/P/C.1', 'jakarta', 'andi', '2010', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(13, '978-90-1-111', 'sampul/2e416dd4df2fa240d1a4e4e485409e67.jpg', 'Bahasa Pascal', 'Andi Oktaviana', 'U', 'Indonesia', '13/PF/PB', '001.1/OKT/B/C.1', 'Solo', 'Yudistira', '2000', 'abcdefghijklmn', 'L', 1, '0000-00-00'),
+(14, '980-19-909', 'sampul/sampul_buku.jpg', 'Rekayasa Perangkat Lunak', 'Muhammad', 'U', 'Indonesia', '14/PF/PB', '800/MUH/R/C.1', 'Yogyakarta', 'Andi', '2000', 'abcdefghijklmn', 'L', 1, '2015-01-17'),
+(15, '980-19-909', 'sampul/sampul_buku.jpg', 'Rekayasa Perangkat Lunak', 'Muhammad', 'U', 'Indonesia', '15/PF/PB', '800/MUH/R/C.2', 'Yogyakarta', 'andi', '2000', 'abcdefghijklmn', 'L', 1, '2015-01-18'),
+(16, '980-19-909', 'sampul/sampul_buku.jpg', 'Rekayasa Perangkat Lunak', 'Muhammad', 'U', 'Indonesia', '16/PF/PB', '800/MUH/R/C.3', 'Yogyakarta', 'Andi', '2000', 'abcdefghijklmn', 'L', 1, '2015-01-18'),
+(17, '879-080-1901-1', 'sampul/sampul_buku.jpg', 'Etika Profesi', 'Nafisah, S.Kom', 'U', 'Indonesia', '17/PF/PB', '305/NAF/E/C.0', 'Pamekasan', 'Yudistira', '2011', 'etika profesi adalah. . .', 'L', 1, '2015-01-18'),
+(18, '89793-91029', 'sampul/sampul_buku.jpg', 'css3', 'ira', 'U', 'Indonesia', '18/PF/PB', '001/IRA/C/C.1', 'pmk', 'andi', '2000', 'hhhhhhhhh', 'L', 1, '2015-01-18'),
+(19, '12345', 'sampul/sampul_buku.jpg', 'jaringan komputer', 'muhammad', 'U', 'Indonesia', '19/PF/PB', '001/MUH/J/C.1', 'pmk', 'andi', '2010', 'bbbbbbbbbbb', 'L', 1, '2015-01-18'),
+(20, '9879-193-193', 'sampul/sampul_buku.jpg', 'animasi dengan flash mx', 'hadi sutopo, ST', 'U', 'Indonesia', '20/PF/PB', '003/SUT/A/C.1', 'surabaya', 'graha ilmu', '2010', 'aaaaaaaaaa', 'L', 1, '2015-01-18'),
+(21, '9879-193-193', 'sampul/sampul_buku.jpg', 'animasi dengan flash mx', 'hadi sutopo, ST', 'U', 'Indonesia', '21/PF/PB', '003/SUT/A/C.2', 'surabaya', 'graha ilmu', '2010', 'aaaaaaaaaa', 'L', 1, '2015-01-18'),
+(22, '870-129-1901-1', 'sampul/9b406284578084e240ea6f008b264c1e.jpg', 'pemrograman web', 'Hariesto, S.Kom', 'U', 'Indonesia', '22/PF/PB', '007/HAR/P/C.1', 'solo', 'airlangga', '2010', 'abcdefghijklm. . .', 'L', 1, '2015-01-18'),
+(23, '9879-193-193', 'sampul/sampul_buku.jpg', 'animasi dengan flash mx', 'hadi sutopo, ST', 'U', 'Indonesia', '23/PF/PB', '003/SUT/A/C.3', 'surabaya', 'graha ilmu', '2010', 'aaaaaaaaaa', 'L', 1, '2015-01-18'),
+(24, '9879-193-193', 'sampul/sampul_buku.jpg', 'animasi dengan flash mx', 'hadi sutopo, ST', 'U', 'Indonesia', '24/PF/PB', '003/SUT/A/C.4', 'surabaya', 'graha ilmu', '2010', 'aaaaaaaaaa', 'L', 1, '2015-01-18'),
+(25, '9879-193-193', 'sampul/sampul_buku.jpg', 'animasi dengan flash mx', 'hadi sutopo, ST', 'U', 'Indonesia', '25/PF/PB', '003/SUT/A/C.5', 'surabaya', 'graha ilmu', '2010', 'aaaaaaaaaa', 'L', 1, '2015-01-18'),
+(26, '890-1-1-10', 'sampul/sampul_buku.jpg', 'hardware', 'liza', 'U', 'Indonesia', '26/PF/PB', '800/LIZ/H/C.1', 'surabaya', 'andi', '2011', 'hardware adalah. . .', 'L', 1, '2015-01-19'),
+(27, '870-1-1', 'sampul/sampul_buku.jpg', 'multimedia', 'abdullah, S.Kom', 'U', 'Indonesia', '27/PF/PB', '002/ABD/M/C.1', 'solo', 'ghalia ilmu', '2011', 'multimedia. . .', 'L', 1, '2015-01-19');
 
 -- --------------------------------------------------------
 
@@ -132,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `tbl_denda` (
   `denda` int(11) DEFAULT NULL,
   PRIMARY KEY (`kode_denda`),
   KEY `FK_TERLAMBAT` (`id_detail_peminjaman`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 --
 -- Dumping data untuk tabel `tbl_denda`
@@ -141,7 +160,8 @@ CREATE TABLE IF NOT EXISTS `tbl_denda` (
 INSERT INTO `tbl_denda` (`kode_denda`, `id_detail_peminjaman`, `tanggal_pinjam`, `tanggal_kembali`, `tanggal_bayar`, `denda`) VALUES
 (1, 1, '2015-01-06', '2015-01-13', '2015-01-15', 1000),
 (2, 5, '2015-01-07', '2015-01-14', '2015-01-15', 500),
-(3, 7, '2015-01-07', '2015-01-14', '2015-01-15', 500);
+(3, 7, '2015-01-07', '2015-01-14', '2015-01-15', 500),
+(4, 14, '2015-01-16', '2015-01-23', '2015-01-26', 1500);
 
 -- --------------------------------------------------------
 
@@ -162,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `tbl_detail_peminjaman` (
   KEY `FK_ADA` (`id_buku`),
   KEY `FK_MEMINJAM` (`id_anggota`),
   KEY `FK_MENANGANI` (`id_petugas`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
 
 --
 -- Dumping data untuk tabel `tbl_detail_peminjaman`
@@ -176,7 +196,33 @@ INSERT INTO `tbl_detail_peminjaman` (`id_detail_peminjaman`, `id_buku`, `id_petu
 (8, 5, 1, 1, '2015-01-15', '2015-01-22', '0000-00-00', 0),
 (9, 6, 1, 1, '2015-01-15', '2015-01-22', '0000-00-00', 0),
 (10, 1, 1, 1, '2015-01-15', '2015-01-22', '0000-00-00', 0),
-(11, 7, 1, 2, '2015-01-15', '0000-00-00', '0000-00-00', 0);
+(11, 7, 1, 2, '2015-01-15', '0000-00-00', '0000-00-00', 0),
+(12, 8, 1, 3, '2015-01-07', '2015-01-14', '0000-00-00', 0),
+(13, 2, 1, 2, '2015-01-16', '0000-00-00', '0000-00-00', 0),
+(14, 9, 1, 3, '2015-01-16', '2015-01-23', '2015-01-26', 0),
+(15, 25, 1, 2, '2015-01-18', '0000-00-00', '2015-01-19', 0),
+(16, 27, 1, 2, '2015-01-19', '0000-00-00', '0000-00-00', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `tbl_devisi_ddc`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_devisi_ddc` (
+  `id_devisi` int(11) NOT NULL AUTO_INCREMENT,
+  `id_kelasutama` int(11) NOT NULL,
+  `kode_devisi` varchar(10) NOT NULL,
+  `keterangan_devisi` varchar(100) NOT NULL,
+  PRIMARY KEY (`id_devisi`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Dumping data untuk tabel `tbl_devisi_ddc`
+--
+
+INSERT INTO `tbl_devisi_ddc` (`id_devisi`, `id_kelasutama`, `kode_devisi`, `keterangan_devisi`) VALUES
+(1, 1, '001', 'ilmu teknik');
 
 -- --------------------------------------------------------
 
@@ -208,11 +254,33 @@ CREATE TABLE IF NOT EXISTS `tbl_file` (
 --
 
 INSERT INTO `tbl_file` (`kode_file`, `id_anggota`, `id_petugas`, `sampul_file`, `nama_file`, `judul_file`, `pengarang_file`, `ringkasan`, `tgl_upload`, `macam_file`, `bahasa_file`, `penerbit_file`, `tahun_terbit_file`) VALUES
-(1, NULL, 1, 'sampul/sampul_file.jpg', 'berkas/c453c83e46693a59a77d3725d8f6ecc4.docx', 'Modul Alpro II', 'Novi Rinawati, S.Kom', 'Modul Aplro II berisi materi tentang array dua dimensi dan array tiga dimensi. . .', '2015-01-15', 'U', 'Indonesia', '', '2010'),
-(2, NULL, 1, 'sampul/sampul_file.jpg', 'berkas/16e99e0b539dfd2a771903e448354f6e.pptx', 'E-Commerce', 'Nindi, S.Kom', 'Materi E-Commerce. . .', '2015-01-15', 'U', 'Indonesia', '', '2010'),
+(1, NULL, 1, 'sampul/b75c9066e7aae2a7fcd918890cadcb53.jpg', 'c453c83e46693a59a77d3725d8f6ecc4.docx', 'Modul Alpro II', 'Novi Rinawati, S.Kom', 'Modul Aplro II berisi materi tentang array dua dimensi dan array tiga dimensi. . .', '2015-01-15', 'U', 'Indonesia', '', '2010'),
+(2, NULL, 1, 'sampul/ed86364cf943d6b874168ca2794e9b58.jpg', 'berkas/16e99e0b539dfd2a771903e448354f6e.pptx', 'E-Commerce', 'Nindi, S.Kom', 'Materi E-Commerce. . .', '2015-01-15', 'U', 'Indonesia', '', '2010'),
 (3, NULL, 1, 'sampul/6941c893dc6a7e0b95866b900047d403.jpg', 'berkas/f214ab815d80b05f71dbaac76648ea3e.docx', 'Model Simulasi', 'Erwin Prasetyowati, ST', 'Model simulasi. . .', '2015-01-15', 'U', 'Indonesia', '', '2013'),
-(5, 2, NULL, 'sampul/sampul_file.jpg', 'berkas/be9470a4617070be77c82ff83a58aa06.pdf', 'sistem operasi', 'Abul Bahrie, S.Kom', 'sistem operasi', '2015-01-15', 'U', 'Indonesia', '', '2011'),
+(5, 2, NULL, 'sampul/f6fcbbd57b3110012d00e74ec4cefcfc.jpg', 'berkas/be9470a4617070be77c82ff83a58aa06.pdf', 'sistem operasi', 'Abul Bahrie, S.Kom', 'sistem operasi', '2015-01-15', 'U', 'Indonesia', '', '2011'),
 (6, NULL, 1, 'sampul/a62af9d12b34c2ddd6d07f235b74b9b4.jpg', 'berkas/7225a039c35373ea74bbf99bd0de93de.ppt', 'Materi 1 Komputer Masyarakat', 'Sholeh Rachmatullah, S.Kom', 'Materi 1 Komputer Masyarakat. . .', '2015-01-15', 'U', 'Indonesia', '', '2012');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `tbl_kelasutama_ddc`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_kelasutama_ddc` (
+  `id_kelasutama` int(11) NOT NULL AUTO_INCREMENT,
+  `kode_kelasutama` varchar(10) NOT NULL,
+  `keterangan_kelasutama` varchar(100) NOT NULL,
+  PRIMARY KEY (`id_kelasutama`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+
+--
+-- Dumping data untuk tabel `tbl_kelasutama_ddc`
+--
+
+INSERT INTO `tbl_kelasutama_ddc` (`id_kelasutama`, `kode_kelasutama`, `keterangan_kelasutama`) VALUES
+(1, '000', 'Karya Umum'),
+(8, '100', 'Filsafat'),
+(9, '200', 'Agama');
 
 -- --------------------------------------------------------
 

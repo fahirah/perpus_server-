@@ -36,6 +36,7 @@ $app->get('/pencarian', function() use ($app,$ctr) {
 $app->options('/buku', function() use($app) { $app->status(200); $app->stop(); });
 $app->get('/buku', function() use ($app,$ctr) {
 	$ctr->load('model','main');
+	$ctr->load('helper', 'date');
 	$r=$ctr->MainModel->view_buku();
 	if($r===FALSE)
 		return halt401($app);
@@ -647,6 +648,32 @@ $app->post('/admin/pengaturanprodi', function() use ($app,$ctr) {
 	json_output($app, $r);
 });
 
+// ----------------------------------------------------------------
+/**
+ * Method: POST
+ * Verb:pengaturankelasutama
+ */
+$app->post('/admin/pengaturankelasut', function() use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->tambah_kelasutama();
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: detailkelas
+ */
+$app->options('/detailkelas/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/detailkelas/:id', function($id) use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$ctr->load('helper', 'date');
+	$r=$ctr->PengaturanModel->view_detilkelasutama($id);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
 
 // ----------------------------------------------------------------
 /**
@@ -657,6 +684,20 @@ $app->options('/admin/pengaturanprodi/:kd', function() use($app) { $app->status(
 $app->delete('/admin/pengaturanprodi/:kd', function($kd) use ($app,$ctr) {
 	$ctr->load('model','pengaturan');
 	$r=$ctr->PengaturanModel->delete_prodi($kd);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: DELETE
+ * Verb: pengaturanprodi
+ */
+$app->options('/admin/pengaturankelasut/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->delete('/admin/pengaturankelasut/:id', function($id) use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->delete_kelasutama($id);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
@@ -725,6 +766,35 @@ $app->options('/user/pengaturan', function() use($app) { $app->status(200); $app
 $app->get('/user/pengaturan', function() use ($app,$ctr) {
 	$ctr->load('model','main');
 	$r=$ctr->MainModel->view_pengaturananggota();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: kelasutama
+ */
+$app->options('/kelasutama', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/kelasutama', function() use ($app,$ctr) {
+	$ctr->load('model','buku');
+	$r=$ctr->BukuModel->view_kelasutama();
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: GET
+ * Verb: devisi
+ */
+$app->options('/devisi', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/devisi', function() use ($app,$ctr) {
+	$ctr->load('model','buku');
+	$r=$ctr->BukuModel->view_devisi();
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
