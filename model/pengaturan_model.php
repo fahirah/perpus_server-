@@ -120,13 +120,11 @@ class PengaturanModel extends ModelBase {
 		if (empty($id)) {
 			$cek=$this->db->query("select count(id_kelasutama) as htg from tbl_kelasutama_ddc where kode_kelasutama='$kode'",true);
 			$htg=$cek->htg;
+			if($htg>0) return FALSE;
 			
-			if($htg==0){
-				//insert
-				$ins=$this->db->query("insert into tbl_kelasutama_ddc VALUES(0,'$kode','$ket')");
-			}else{
-				return FALSE;
-			}
+			//insert
+			$ins=$this->db->query("insert into tbl_kelasutama_ddc VALUES(0,'$kode','$ket')");
+			
 		} else {
 			// edit
 			$edit=$this->db->query("update tbl_kelasutama_ddc set kode_kelasutama='$kode', keterangan_kelasutama='$ket' where id_kelasutama='$id'");
@@ -134,9 +132,41 @@ class PengaturanModel extends ModelBase {
 		return $this->view_pengaturan();
 	}
 	
+	public function tambah_devisi(){
+		extract($this->prepare_post(array('iddev','klsutama','kodedev','ketdev')));
+		$ketdev=$this->db->escape_str($ketdev);
+		$id = floatval($iddev);
+		
+		if (empty($id)) {
+			$cek=$this->db->query("select count(id_devisi) as htg from tbl_devisi_ddc where kode_devisi='$kodedev'",true);
+			$htg=$cek->htg;
+			
+			if($htg==0){
+				//insert
+				$ins=$this->db->query("insert into tbl_devisi_ddc VALUES(0,'$klsutama','$kodedev','$ketdev')");
+			}else{
+				return FALSE;
+			}
+		} else {
+			$cek=$this->db->query("select count(id_devisi) as htg from tbl_devisi_ddc where kode_devisi='$kodedev' and id_devisi!='$id'",true);
+			$htg=$cek->htg;
+			// edit
+			if($htg==0){
+				$edit=$this->db->query("update tbl_devisi_ddc set kode_devisi='$kodedev', keterangan_devisi='$ketdev', id_kelasutama='$klsutama' where id_devisi='$id'");
+			}else{
+				return FALSE;
+			}
+		}
+		return $this->view_pengaturan();
+	}
+	
 	public function view_detilkelasutama($id){	
 		$r=array();
 		$id=floatval($id);
+		$ambilkls=$this->db->query("select * from tbl_kelasutama_ddc where id_kelasutama='$id'",true);
+		$kodekls=$ambilkls->kode_kelasutama;
+		$ketkls=$ambilkls->keterangan_kelasutama;
+		
 		$ambil=$this->db->query("select * from tbl_devisi_ddc where id_kelasutama='$id'");
 		
 		if(! $ambil)  return FALSE;		
@@ -146,11 +176,14 @@ class PengaturanModel extends ModelBase {
 			$r[]=array(
 				'iddev'=>$d->id_devisi,
 				'kodedev'=>$d->kode_devisi,
+				'klsutama'=>$d->id_kelasutama,
 				'ketdev'=>$d->keterangan_devisi
 			);
 		}
 		
 		return array(
+			'kodekls'=>$kodekls,
+			'ketkls'=>$ketkls,
 			'data' =>$r
 		);
 	}
@@ -164,6 +197,12 @@ class PengaturanModel extends ModelBase {
 	public function delete_kelasutama($id){
 		$id = floatval($id);
 		$this->db->query("delete from tbl_kelasutama_ddc where id_kelasutama='$id'");
+		return $this->view_pengaturan();
+	}
+
+	public function delete_devisi($id){
+		$id = floatval($id);
+		$this->db->query("delete from tbl_devisi_ddc where id_devisi='$id'");
 		return $this->view_pengaturan();
 	}
 	

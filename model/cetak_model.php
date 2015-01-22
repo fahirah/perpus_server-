@@ -11,10 +11,10 @@ class CetakModel extends ModelBase {
 	
 	public function cetak_kartubuku($kode) {	
 		$r=array();
-		$d=$this->db->query("select * from tbl_buku where kode_buku='$kode'",true);
+		$d=$this->db->query("select * from tbl_buku where id_buku='$kode'",true);
 		$penempatan=$d->no_penempatan;
 		$a=explode("/", $penempatan);
-		if(! $d)  return FALSE;				
+		$bkode=str_replace('/','_',$penempatan);		
 ?>
 	<script src="/lib/jquery-1.10.2.min.js"></script>
 	
@@ -24,7 +24,7 @@ class CetakModel extends ModelBase {
 		</tr>
 		<tr style="border-top: .8mm solid #000; border-left: .8mm solid #000; border-right: .8mm solid #000; border-right: .8mm solid #000;">
 			<td rowspan="5" style="border-bottom: .8mm solid #000; height:120px; width:110px;" >
-				<img src="/barcode/<?php echo $kode; ?>.png" style="-moz-transform: rotate(270deg); -o-transform: rotate(270deg); -webkit-transform: rotate(270deg); transform: rotate(270deg); ">
+				<img src="/barcode/<?php echo $bkode; ?>.png" style="height:45px;-moz-transform: rotate(270deg); -o-transform: rotate(270deg); -webkit-transform: rotate(270deg); transform: rotate(270deg); ">
 			</td>
 			<td ><font size="5px"><?php echo $kode; ?> </font></td>
 		</tr>

@@ -54,6 +54,7 @@ class MainModel extends ModelBase {
 			else{
 				for($i=0; $i<count($hasil);$i++){
 					$d=$hasil[$i];
+					$id=$d->id_buku;
 					$isbn=$d->isbn_buku;
 					$judul=$d->judul_buku;
 					$pengarang=$d->pengarang_buku;
@@ -137,6 +138,7 @@ class MainModel extends ModelBase {
 					$d=$hasil[$i];
 					
 					$r[]=array(
+						'id'=>$d->id_buku,
 						'isbn'=>$d->isbn_buku,
 						'judul'=>$d->judul_buku,
 						'sampul'=>$d->sampul_buku,
@@ -223,7 +225,7 @@ class MainModel extends ModelBase {
 		$start=$cpagebk*$tdph;
 		$r=array();
 		if(empty($jenis)){
-			$hasil=$this->db->query("SELECT * FROM tbl_buku where judul_buku like '%{$kata}%' or pengarang_buku like '%{$kata}%' or penerbit_buku like '%{$kata}% limit $start,$tdph");
+			$hasil=$this->db->query("SELECT * FROM tbl_buku where judul_buku like '%{$kata}%' or pengarang_buku like '%{$kata}%' or penerbit_buku like '%{$kata}%' limit $start,$tdph");
 		}else if($jenis=="judul"){
 			$hasil=$this->db->query("SELECT * FROM tbl_buku where judul_buku like '%{$kata}%' limit $start,$tdph");
 		}else if($jenis=="pengarang"){
@@ -238,6 +240,7 @@ class MainModel extends ModelBase {
 				$d=$hasil[$i];
 				
 				$r[]=array(
+					'id'=>$d->id_buku,
 					'judul'=>$d->judul_buku,
 					'isbn'=>$d->isbn_buku,
 					'sampul'=>$d->sampul_buku,
@@ -245,7 +248,8 @@ class MainModel extends ModelBase {
 					'macam'=>$d->macam_buku,
 					'bahasa'=>$d->bahasa_buku,
 					'penerbit'=>$d->penerbit_buku,
-					'tahun'=>$d->tahun_terbit_buku
+					'tahun'=>$d->tahun_terbit_buku,
+					'penempatan'=>$d->no_penempatan
 				);
 			}
 			return array(
@@ -375,8 +379,9 @@ class MainModel extends ModelBase {
 			$d=$hasil[$i];
 				
 				$idbuku=$d->id_buku;
-				$ambilbk=$this->db->query("select judul_buku from tbl_buku where id_buku='$idbuku'",true);
+				$ambilbk=$this->db->query("select judul_buku,no_penempatan from tbl_buku where id_buku='$idbuku'",true);
 				$judul=$ambilbk->judul_buku;
+				$penempatan=$ambilbk->no_penempatan;
 				$iddet=$d->id_detail_peminjaman;
 				$tglkembali=$d->tgl_kembali;	
 				$tgl_pengembalian=$d->tgl_pengembalian;	
@@ -393,8 +398,9 @@ class MainModel extends ModelBase {
 					$denda='-';
 				}
 			$r[]=array(
-				'idbuku'=>$kdbuku,
+				'idbuku'=>$idbuku,
 				'judul'=>$judul,
+				'penempatan'=>$penempatan,
 				'tgl_pinjam'=>datedb_to_tanggal($d->tgl_pinjam, 'd-F-Y'),
 				'tgl_kembali'=>($d->tgl_kembali == '0000-00-00' ? '-' : datedb_to_tanggal($d->tgl_kembali, 'd-F-Y')),
 				'denda'=>$denda
@@ -451,12 +457,18 @@ class MainModel extends ModelBase {
 		else{
 			for($i=0; $i<count($ambilbkbr);$i++){
 				$d=$ambilbkbr[$i];
-					
+				
+				$pnmptn=$d->no_penempatan;
+				$b=strlen($pnmptn);
+				$c=$b-4;
+				$ddc=substr($pnmptn,0,$c);
+				
 				$q[]=array(
+					'id'=>$d->id_buku,
 					'isbn'=>$d->isbn_buku,
 					'judul'=>$d->judul_buku,
 					'sampul'=>$d->sampul_buku,
-					'penempatan'=>$d->no_penempatan,
+					'penempatan'=>$ddc,
 					'pengarang'=>$d->pengarang_buku,
 					'macam'=>$d->macam_buku,
 					'bahasa'=>$d->bahasa_buku,

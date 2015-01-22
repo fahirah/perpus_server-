@@ -166,8 +166,9 @@ class PeminjamanModel extends ModelBase {
 	}
 	
 	public function view_detilbuku($kode,$idan){
-		
 		$r=array();
+		$kode=base64_decode($kode);
+		$kode=str_replace('_','/',$kode);
 		$cekang=$this->db->query("select id_anggota, status_anggota from tbl_anggota where id_anggota='$idan'", true);
 		if(! $cekang){
 			$d2=$this->db->query("select id_anggota, status_anggota from tbl_anggota where no_identitas='$idan'",true);
@@ -177,7 +178,7 @@ class PeminjamanModel extends ModelBase {
 			$status= $cekang->status_anggota;
 		}	
 		
-		$d=$this->db->query("select * from tbl_buku where no_penempatan='002/ABD/M/C.1' and status_buku='L'",true);
+		$d=$this->db->query("select * from tbl_buku where no_penempatan='$kode' and status_buku='L'",true);
 		if(! $d){
 			return FALSE;	
 		}else{

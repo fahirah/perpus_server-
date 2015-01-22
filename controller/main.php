@@ -35,8 +35,8 @@ $app->get('/pencarian', function() use ($app,$ctr) {
  */
 $app->options('/buku', function() use($app) { $app->status(200); $app->stop(); });
 $app->get('/buku', function() use ($app,$ctr) {
-	$ctr->load('model','main');
 	$ctr->load('helper', 'date');
+	$ctr->load('model','main');
 	$r=$ctr->MainModel->view_buku();
 	if($r===FALSE)
 		return halt401($app);
@@ -661,6 +661,17 @@ $app->post('/admin/pengaturankelasut', function() use ($app,$ctr) {
 
 // ----------------------------------------------------------------
 /**
+ * Method: POST
+ * Verb:pengaturandevisi
+ */
+$app->post('/admin/pengaturandevisi', function() use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->tambah_devisi();
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
  * Method: GET
  * Verb: detailkelas
  */
@@ -692,12 +703,26 @@ $app->delete('/admin/pengaturanprodi/:kd', function($kd) use ($app,$ctr) {
 // ----------------------------------------------------------------
 /**
  * Method: DELETE
- * Verb: pengaturanprodi
+ * Verb: pengaturankelasut
  */
 $app->options('/admin/pengaturankelasut/:id', function() use($app) { $app->status(200); $app->stop(); });
 $app->delete('/admin/pengaturankelasut/:id', function($id) use ($app,$ctr) {
 	$ctr->load('model','pengaturan');
 	$r=$ctr->PengaturanModel->delete_kelasutama($id);
+	if($r===FALSE)
+		return halt401($app);
+	json_output($app, $r);
+});
+
+// ----------------------------------------------------------------
+/**
+ * Method: DELETE
+ * Verb: pengaturandevisi
+ */
+$app->options('/admin/pengaturandevisi/:id', function() use($app) { $app->status(200); $app->stop(); });
+$app->delete('/admin/pengaturandevisi/:id', function($id) use ($app,$ctr) {
+	$ctr->load('model','pengaturan');
+	$r=$ctr->PengaturanModel->delete_devisi($id);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
@@ -786,15 +811,16 @@ $app->get('/kelasutama', function() use ($app,$ctr) {
 	json_output($app, $r);
 });
 
+
 // ----------------------------------------------------------------
 /**
  * Method: GET
  * Verb: devisi
  */
-$app->options('/devisi', function() use($app) { $app->status(200); $app->stop(); });
-$app->get('/devisi', function() use ($app,$ctr) {
+$app->options('/devisi/:kode', function() use($app) { $app->status(200); $app->stop(); });
+$app->get('/devisi/:kode', function($kode) use ($app,$ctr) {
 	$ctr->load('model','buku');
-	$r=$ctr->BukuModel->view_devisi();
+	$r=$ctr->BukuModel->view_devisi($kode);
 	if($r===FALSE)
 		return halt401($app);
 	json_output($app, $r);
